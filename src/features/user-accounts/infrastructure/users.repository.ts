@@ -5,8 +5,9 @@ import {
   UserDocument,
   UserModelType,
 } from '../domain/user.entity';
-import { NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 
+@Injectable()
 export class UsersRepository {
   // Injection of the model through DI
   constructor(@InjectModel(User.name) private UserModel: UserModelType) {}

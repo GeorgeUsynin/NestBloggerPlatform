@@ -22,7 +22,7 @@ export class User {
   @Prop({ enum: DeletionStatus, default: DeletionStatus.NotDeleted })
   deletionStatus: DeletionStatus;
 
-  static createInstance(dto: CreateUserDto): UserDocument {
+  static createUser(dto: CreateUserDto): UserDocument {
     // UserDocument!
     const user = new this(); //UserModel!
     user.email = dto.email;

@@ -1,10 +1,11 @@
 import { DeletionStatus, User, UserModelType } from '../domain/user.entity';
 import { InjectModel } from '@nestjs/mongoose';
 import { UserViewDto } from '../api/view-dto/user.view-dto';
-import { NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { GetUsersQueryParams } from '../api/query-params-dto/get-users-query-params.input-dto';
 import { PaginatedViewDto } from 'src/core/dto/base.paginated.view-dto';
 
+@Injectable()
 export class UsersQueryRepository {
   constructor(
     @InjectModel(User.name)
@@ -50,12 +51,11 @@ export class UsersQueryRepository {
     query: GetUsersQueryParams,
     filter: any,
   ) {
-    const { sortBy, sortDirection, pageSize, calculateSkip } = query;
+    const { sortBy, sortDirection, pageSize } = query;
     return this.UserModel.find(filter)
       .sort({ [sortBy]: sortDirection })
-      .skip(calculateSkip())
-      .limit(pageSize)
-      .lean();
+      .skip(query.calculateSkip())
+      .limit(pageSize);
   }
 
   async getTotalCountOfFilteredUsers(filter: any) {

@@ -18,7 +18,7 @@ export class UsersService {
     //TODO: move to bcrypt service
     const passwordHash = await bcrypt.hash(dto.password, 10);
 
-    const user = this.UserModel.createInstance({
+    const user = this.UserModel.createUser({
       email: dto.email,
       login: dto.login,
       password: passwordHash,
