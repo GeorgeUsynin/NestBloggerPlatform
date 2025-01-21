@@ -10,11 +10,11 @@ import {
   Query,
 } from '@nestjs/common';
 import { UsersQueryRepository } from '../infrastructure/users.query-repository';
-import { UserViewDto } from '../api/view-dto/user.view-dto';
+import { UserViewDto } from './dto/view-dto/user.view-dto';
 import { UsersService } from '../application/users.service';
-import { CreateUserInputDto } from './input-dto/users.input-dto';
-import { GetUsersQueryParams } from './query-params-dto/get-users-query-params.input-dto';
-import { PaginatedViewDto } from 'src/core/dto/base.paginated.view-dto';
+import { CreateUserInputDto } from './dto/input-dto/create/users.input-dto';
+import { GetUsersQueryParams } from './dto/query-params-dto/get-users-query-params.input-dto';
+import { PaginatedViewDto } from '../../../core/dto/base.paginated.view-dto';
 
 @Controller('users')
 export class UsersController {
@@ -29,10 +29,10 @@ export class UsersController {
   }
 
   @Get()
-  async getAll(
+  async getAllUsers(
     @Query() query: GetUsersQueryParams,
   ): Promise<PaginatedViewDto<UserViewDto[]>> {
-    return this.usersQueryRepository.getAll(query);
+    return this.usersQueryRepository.getAllUsers(query);
   }
 
   @Post()

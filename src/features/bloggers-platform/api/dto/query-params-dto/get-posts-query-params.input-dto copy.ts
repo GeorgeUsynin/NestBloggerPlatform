@@ -1,4 +1,4 @@
-import { BaseSortablePaginationParams } from 'src/core/dto/base.query-params.input-dto';
+import { BaseSortablePaginationParams } from '../../../../../core/dto/base.query-params.input-dto';
 
 export enum PostsSortBy {
   CreatedAt = 'createdAt',
@@ -6,7 +6,7 @@ export enum PostsSortBy {
   BlogName = 'blogName',
 }
 
-// DTO for a query for a list of users with pagination, sorting, and filtering
+// DTO for a query for a list of posts with pagination, sorting, and filtering
 export class GetPostsQueryParams extends BaseSortablePaginationParams<PostsSortBy> {
   sortBy = PostsSortBy.CreatedAt;
 }

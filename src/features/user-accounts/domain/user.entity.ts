@@ -1,6 +1,6 @@
 import { Schema, Prop, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, Model, SchemaTimestampsConfig } from 'mongoose';
-import { CreateUserDto } from '../dto/users.create-dto';
+import { CreateUserDto } from './dto/create/users.create-dto';
 
 export enum DeletionStatus {
   NotDeleted = 'not-deleted',

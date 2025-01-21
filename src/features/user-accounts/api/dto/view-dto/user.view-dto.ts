@@ -1,5 +1,5 @@
 import { SchemaTimestampsConfig } from 'mongoose';
-import { UserDocument } from '../../domain/user.entity';
+import { UserDocument } from '../../../domain/user.entity';
 
 export class UserViewDto {
   id: string;

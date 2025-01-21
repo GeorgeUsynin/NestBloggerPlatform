@@ -1,7 +1,7 @@
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 
 export function pipesSetup(app: INestApplication) {
-  //Глобальный пайп для валидации и трансформации входящих данных.
+  //Global pipe for validation and transformation of incoming data.
 
   app.useGlobalPipes(
     new ValidationPipe({

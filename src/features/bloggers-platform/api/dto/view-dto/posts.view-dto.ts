@@ -1,5 +1,12 @@
 import { SchemaTimestampsConfig } from 'mongoose';
 import { PostDocument } from '../../../domain/post.entity';
+import { LikeStatus } from 'src/features/bloggers-platform/types';
+
+type NewestLikes = {
+  addedAt: string;
+  userId: string;
+  login: string;
+};
 
 export class PostViewDto {
   id: string;
@@ -9,8 +16,18 @@ export class PostViewDto {
   blogId: string;
   blogName: string;
   createdAt: SchemaTimestampsConfig['createdAt'];
+  extendedLikesInfo: {
+    likesCount: number;
+    dislikesCount: number;
+    myStatus: LikeStatus;
+    newestLikes: NewestLikes[];
+  };
 
-  static mapToView(post: PostDocument): PostViewDto {
+  static mapToView(
+    post: PostDocument,
+    myStatus: LikeStatus,
+    newestLikes: NewestLikes[],
+  ): PostViewDto {
     const dto = new PostViewDto();
 
     dto.id = post._id.toString();
@@ -20,6 +37,12 @@ export class PostViewDto {
     dto.createdAt = post.createdAt;
     dto.shortDescription = post.shortDescription;
     dto.title = post.title;
+    dto.extendedLikesInfo = {
+      dislikesCount: post.likesInfo.dislikesCount,
+      likesCount: post.likesInfo.likesCount,
+      myStatus,
+      newestLikes,
+    };
 
     return dto;
   }

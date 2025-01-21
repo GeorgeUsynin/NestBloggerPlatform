@@ -1,6 +1,7 @@
 import { Schema, Prop, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, Model, SchemaTimestampsConfig } from 'mongoose';
 import { CreatePostDto } from './dto/create/posts.create-dto';
+import { UpdatePostDto } from './dto/update/posts.update-dto';
 
 export enum DeletionStatus {
   NotDeleted = 'not-deleted',
@@ -25,6 +26,18 @@ export class Post {
   @Prop({ type: String, required: true })
   blogName: string;
 
+  @Prop({
+    type: {
+      dislikesCount: Number,
+      likesCount: Number,
+    },
+    default: { dislikesCount: 0, likesCount: 0 }, // Set default object
+  })
+  likesInfo: {
+    dislikesCount: number;
+    likesCount: number;
+  };
+
   @Prop({ enum: DeletionStatus, default: DeletionStatus.NotDeleted })
   deletionStatus: DeletionStatus;
 
@@ -46,6 +59,13 @@ export class Post {
       throw new Error('Entity already deleted');
     }
     this.deletionStatus = DeletionStatus.PermanentDeleted;
+  }
+
+  update(dto: UpdatePostDto) {
+    this.title = dto.title;
+    this.shortDescription = dto.shortDescription;
+    this.content = dto.content;
+    this.blogId = dto.blogId;
   }
 }
 

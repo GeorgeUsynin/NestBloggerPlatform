@@ -25,8 +25,8 @@ export class BlogsService {
   async updateBlogById(id: string, dto: UpdateBlogDto) {
     const blog = await this.blogsRepository.findBlogByIdOrNotFoundFail(id);
 
-    // не присваиваем св-ва сущностям напрямую в сервисах! даже для изменения одного св-ва
-    // создаём метод
+    // don't assign properties directly to entities in services! even for changing a single property
+    // create a method instead
     blog.update(dto); // change detection
 
     await this.blogsRepository.save(blog);

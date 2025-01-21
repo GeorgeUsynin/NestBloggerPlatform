@@ -66,6 +66,9 @@ export class Blog {
   }
 }
 
+
+
+
 export const BlogSchema = SchemaFactory.createForClass(Blog);
 
 // Registers the entity methods in the schema

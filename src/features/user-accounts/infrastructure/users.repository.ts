@@ -12,25 +12,21 @@ export class UsersRepository {
   // Injection of the model through DI
   constructor(@InjectModel(User.name) private UserModel: UserModelType) {}
 
-  async findById(id: string): Promise<UserDocument | null> {
-    return this.UserModel.findOne({
+  async findUserByIdOrNotFoundFail(id: string): Promise<UserDocument> {
+    const user = await this.UserModel.findOne({
       _id: id,
       deletionStatus: { $ne: DeletionStatus.PermanentDeleted },
     });
+
+    if (!user) {
+      //TODO: replace with domain exception
+      throw new NotFoundException('User not found');
+    }
+
+    return user;
   }
 
   async save(user: UserDocument) {
     await user.save();
-  }
-
-  async findOrNotFoundFail(id: string): Promise<UserDocument> {
-    const user = await this.findById(id);
-
-    if (!user) {
-      //TODO: replace with domain exception
-      throw new NotFoundException('user not found');
-    }
-
-    return user;
   }
 }

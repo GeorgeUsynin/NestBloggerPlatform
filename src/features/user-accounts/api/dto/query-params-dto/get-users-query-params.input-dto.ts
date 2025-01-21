@@ -1,4 +1,4 @@
-import { BaseSortablePaginationParams } from 'src/core/dto/base.query-params.input-dto';
+import { BaseSortablePaginationParams } from '../../../../../core/dto/base.query-params.input-dto';
 
 export enum UsersSortBy {
   CreatedAt = 'createdAt',

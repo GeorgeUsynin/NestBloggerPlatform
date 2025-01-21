@@ -1,9 +1,10 @@
 import { DeletionStatus, User, UserModelType } from '../domain/user.entity';
 import { InjectModel } from '@nestjs/mongoose';
-import { UserViewDto } from '../api/view-dto/user.view-dto';
+import { UserViewDto } from '../api/dto/view-dto/user.view-dto';
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { GetUsersQueryParams } from '../api/query-params-dto/get-users-query-params.input-dto';
-import { PaginatedViewDto } from 'src/core/dto/base.paginated.view-dto';
+import { GetUsersQueryParams } from '../api/dto/query-params-dto/get-users-query-params.input-dto';
+import { PaginatedViewDto } from '../../../core/dto/base.paginated.view-dto';
+import { FilterQuery } from 'mongoose';
 
 @Injectable()
 export class UsersQueryRepository {
@@ -19,22 +20,32 @@ export class UsersQueryRepository {
     }).exec();
 
     if (!user) {
-      throw new NotFoundException('user not found');
+      throw new NotFoundException('User not found');
     }
 
     return UserViewDto.mapToView(user);
   }
 
-  //TODO: add pagination and filters
-  async getAll(
+  async getAllUsers(
     query: GetUsersQueryParams,
   ): Promise<PaginatedViewDto<UserViewDto[]>> {
-    const filter = {
-      $or: [
-        { login: { $regex: query.searchLoginTerm, $options: 'i' } },
-        { email: { $regex: query.searchEmailTerm, $options: 'i' } },
-      ],
+    const filter: FilterQuery<User> = {
+      deletionStatus: DeletionStatus.NotDeleted,
     };
+
+    if (query.searchLoginTerm) {
+      filter.$or = filter.$or || [];
+      filter.$or.push({
+        login: { $regex: query.searchLoginTerm, $options: 'i' },
+      });
+    }
+
+    if (query.searchEmailTerm) {
+      filter.$or = filter.$or || [];
+      filter.$or.push({
+        email: { $regex: query.searchEmailTerm, $options: 'i' },
+      });
+    }
 
     const items = await this.findUserItemsByParamsAndFilter(query, filter);
     const totalCount = await this.getTotalCountOfFilteredUsers(filter);
@@ -49,7 +60,7 @@ export class UsersQueryRepository {
 
   async findUserItemsByParamsAndFilter(
     query: GetUsersQueryParams,
-    filter: any,
+    filter: FilterQuery<User>,
   ) {
     const { sortBy, sortDirection, pageSize } = query;
     return this.UserModel.find(filter)
@@ -58,7 +69,7 @@ export class UsersQueryRepository {
       .limit(pageSize);
   }
 
-  async getTotalCountOfFilteredUsers(filter: any) {
+  async getTotalCountOfFilteredUsers(filter: FilterQuery<User>) {
     return this.UserModel.countDocuments(filter);
   }
 }
