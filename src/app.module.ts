@@ -12,18 +12,21 @@ import { join } from 'path';
 
 @Module({
   imports: [
+    // Serve static files from swagger-static folder
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '..', 'swagger-static'),
       serveRoot: process.env.NODE_ENV === 'development' ? '/' : '/api',
     }),
+    // Load environment variables
     ConfigModule.forRoot(),
+    // Connect to MongoDB
     MongooseModule.forRoot(process.env.MONGO_URL!, {
       dbName: DB_NAME,
     }),
-    TestingModule,
+    CoreModule,
     UsersAccountsModule,
     BloggersPlatformModule,
-    CoreModule,
+    TestingModule,
   ],
   controllers: [AppController],
   providers: [],

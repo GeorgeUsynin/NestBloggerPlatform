@@ -4,7 +4,10 @@ import { pipesSetup } from './pipes.setup';
 import { swaggerSetup } from './swagger.setup';
 
 export function appSetup(app: INestApplication) {
+  // Setup global pipes
   pipesSetup(app);
+  // Setup global prefix
   globalPrefixSetup(app);
+  // Setup swagger
   swaggerSetup(app);
 }

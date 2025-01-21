@@ -25,17 +25,163 @@ window.onload = function() {
           ]
         }
       },
-      "/testing/all-data": {
+      "/users/{id}": {
+        "get": {
+          "operationId": "UsersController_getById",
+          "parameters": [
+            {
+              "name": "id",
+              "required": true,
+              "in": "path",
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/UserViewDto"
+                  }
+                }
+              }
+            }
+          },
+          "tags": [
+            "Users"
+          ]
+        },
         "delete": {
-          "operationId": "TestingController_deleteAll",
-          "parameters": [],
+          "operationId": "UsersController_deleteUser",
+          "parameters": [
+            {
+              "name": "id",
+              "required": true,
+              "in": "path",
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
           "responses": {
             "204": {
               "description": ""
             }
           },
           "tags": [
-            "Testing"
+            "Users"
+          ]
+        }
+      },
+      "/users": {
+        "get": {
+          "operationId": "UsersController_getAllUsers",
+          "parameters": [
+            {
+              "name": "sortBy",
+              "required": true,
+              "in": "query",
+              "schema": {
+                "default": "createdAt",
+                "type": "string",
+                "enum": [
+                  "createdAt",
+                  "login",
+                  "email"
+                ]
+              }
+            },
+            {
+              "name": "searchLoginTerm",
+              "required": true,
+              "in": "query",
+              "schema": {
+                "nullable": true,
+                "default": null,
+                "type": "string"
+              }
+            },
+            {
+              "name": "searchEmailTerm",
+              "required": true,
+              "in": "query",
+              "schema": {
+                "nullable": true,
+                "default": null,
+                "type": "string"
+              }
+            },
+            {
+              "name": "sortDirection",
+              "required": true,
+              "in": "query",
+              "schema": {
+                "default": "desc",
+                "type": "string",
+                "enum": [
+                  "asc",
+                  "desc"
+                ]
+              }
+            },
+            {
+              "name": "pageNumber",
+              "required": true,
+              "in": "query",
+              "schema": {
+                "default": 1,
+                "type": "number"
+              }
+            },
+            {
+              "name": "pageSize",
+              "required": true,
+              "in": "query",
+              "schema": {
+                "default": 10,
+                "type": "number"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": ""
+            }
+          },
+          "tags": [
+            "Users"
+          ]
+        },
+        "post": {
+          "operationId": "UsersController_createUser",
+          "parameters": [],
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateUserInputDto"
+                }
+              }
+            }
+          },
+          "responses": {
+            "201": {
+              "description": "",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/UserViewDto"
+                  }
+                }
+              }
+            }
+          },
+          "tags": [
+            "Users"
           ]
         }
       },
@@ -566,163 +712,17 @@ window.onload = function() {
           ]
         }
       },
-      "/users/{id}": {
-        "get": {
-          "operationId": "UsersController_getById",
-          "parameters": [
-            {
-              "name": "id",
-              "required": true,
-              "in": "path",
-              "schema": {
-                "type": "string"
-              }
-            }
-          ],
-          "responses": {
-            "200": {
-              "description": "",
-              "content": {
-                "application/json": {
-                  "schema": {
-                    "$ref": "#/components/schemas/UserViewDto"
-                  }
-                }
-              }
-            }
-          },
-          "tags": [
-            "Users"
-          ]
-        },
+      "/testing/all-data": {
         "delete": {
-          "operationId": "UsersController_deleteUser",
-          "parameters": [
-            {
-              "name": "id",
-              "required": true,
-              "in": "path",
-              "schema": {
-                "type": "string"
-              }
-            }
-          ],
+          "operationId": "TestingController_deleteAll",
+          "parameters": [],
           "responses": {
             "204": {
               "description": ""
             }
           },
           "tags": [
-            "Users"
-          ]
-        }
-      },
-      "/users": {
-        "get": {
-          "operationId": "UsersController_getAllUsers",
-          "parameters": [
-            {
-              "name": "sortBy",
-              "required": true,
-              "in": "query",
-              "schema": {
-                "default": "createdAt",
-                "type": "string",
-                "enum": [
-                  "createdAt",
-                  "login",
-                  "email"
-                ]
-              }
-            },
-            {
-              "name": "searchLoginTerm",
-              "required": true,
-              "in": "query",
-              "schema": {
-                "nullable": true,
-                "default": null,
-                "type": "string"
-              }
-            },
-            {
-              "name": "searchEmailTerm",
-              "required": true,
-              "in": "query",
-              "schema": {
-                "nullable": true,
-                "default": null,
-                "type": "string"
-              }
-            },
-            {
-              "name": "sortDirection",
-              "required": true,
-              "in": "query",
-              "schema": {
-                "default": "desc",
-                "type": "string",
-                "enum": [
-                  "asc",
-                  "desc"
-                ]
-              }
-            },
-            {
-              "name": "pageNumber",
-              "required": true,
-              "in": "query",
-              "schema": {
-                "default": 1,
-                "type": "number"
-              }
-            },
-            {
-              "name": "pageSize",
-              "required": true,
-              "in": "query",
-              "schema": {
-                "default": 10,
-                "type": "number"
-              }
-            }
-          ],
-          "responses": {
-            "200": {
-              "description": ""
-            }
-          },
-          "tags": [
-            "Users"
-          ]
-        },
-        "post": {
-          "operationId": "UsersController_createUser",
-          "parameters": [],
-          "requestBody": {
-            "required": true,
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/CreateUserInputDto"
-                }
-              }
-            }
-          },
-          "responses": {
-            "201": {
-              "description": "",
-              "content": {
-                "application/json": {
-                  "schema": {
-                    "$ref": "#/components/schemas/UserViewDto"
-                  }
-                }
-              }
-            }
-          },
-          "tags": [
-            "Users"
+            "Testing"
           ]
         }
       }
@@ -744,6 +744,48 @@ window.onload = function() {
         }
       },
       "schemas": {
+        "UserViewDto": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string"
+            },
+            "login": {
+              "type": "string"
+            },
+            "email": {
+              "type": "string"
+            },
+            "createdAt": {
+              "type": "object"
+            }
+          },
+          "required": [
+            "id",
+            "login",
+            "email",
+            "createdAt"
+          ]
+        },
+        "CreateUserInputDto": {
+          "type": "object",
+          "properties": {
+            "login": {
+              "type": "string"
+            },
+            "password": {
+              "type": "string"
+            },
+            "email": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "login",
+            "password",
+            "email"
+          ]
+        },
         "BlogViewDto": {
           "type": "object",
           "properties": {
@@ -984,48 +1026,6 @@ window.onload = function() {
             "commentatorInfo",
             "createdAt",
             "likesInfo"
-          ]
-        },
-        "UserViewDto": {
-          "type": "object",
-          "properties": {
-            "id": {
-              "type": "string"
-            },
-            "login": {
-              "type": "string"
-            },
-            "email": {
-              "type": "string"
-            },
-            "createdAt": {
-              "type": "object"
-            }
-          },
-          "required": [
-            "id",
-            "login",
-            "email",
-            "createdAt"
-          ]
-        },
-        "CreateUserInputDto": {
-          "type": "object",
-          "properties": {
-            "login": {
-              "type": "string"
-            },
-            "password": {
-              "type": "string"
-            },
-            "email": {
-              "type": "string"
-            }
-          },
-          "required": [
-            "login",
-            "password",
-            "email"
           ]
         }
       }
