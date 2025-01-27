@@ -12,7 +12,6 @@ export class DomainExceptionsFilter extends BaseExceptionFilter {
     response: Response,
     request: Request,
   ): void {
-    console.log('DomainExceptionsFilter');
     response
       .status(this.calculateHttpCode(exception))
       .json(this.getDefaultHttpBody(request.url, exception));
