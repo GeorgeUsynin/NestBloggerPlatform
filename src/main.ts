@@ -11,9 +11,6 @@ async function bootstrap() {
   // Create the NestJS application
   const app = await NestFactory.create(AppModule);
 
-  // Enable CORS
-  app.enableCors();
-
   // Setup the application
   appSetup(app);
 

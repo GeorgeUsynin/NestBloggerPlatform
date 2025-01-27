@@ -7,16 +7,31 @@ export enum DeletionStatus {
   PermanentDeleted = 'permanent-deleted',
 }
 
+export const loginConstraints = {
+  minLength: 3,
+  maxLength: 10,
+  match: /^[a-zA-Z0-9_-]*$/,
+};
+
+export const passwordConstraints = {
+  minLength: 6,
+  maxLength: 20,
+};
+
+export const emailConstraints = {
+  match: /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/,
+};
+
 // The timestamp flag automatically adds the updatedAt and createdAt fields
 @Schema({ timestamps: true })
 export class User {
-  @Prop({ type: String, required: true })
+  @Prop({ type: String, required: true, ...loginConstraints })
   login: string;
 
   @Prop({ type: String, required: true })
   passwordHash: string;
 
-  @Prop({ type: String, required: true })
+  @Prop({ type: String, required: true, ...emailConstraints })
   email: string;
 
   @Prop({ enum: DeletionStatus, default: DeletionStatus.NotDeleted })

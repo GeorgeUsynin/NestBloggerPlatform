@@ -1,8 +1,31 @@
 import { CreateUserDto } from '../../../../domain/dto/create/users.create-dto';
+import {
+  IsStringWithTrim,
+  LengthWithMessage,
+  MatchesWithMessage,
+} from 'src/core/decorators/validation';
+import {
+  emailConstraints,
+  loginConstraints,
+  passwordConstraints,
+} from 'src/features/user-accounts/domain/user.entity';
 
-export class CreateUserInputDto implements CreateUserDto {
+export class CreateUserInputDto extends CreateUserDto {
+  // Call order: @IsStringWithTrim() -> @MatchesWithMessage() -> @LengthWithMessage()
+  @MatchesWithMessage(loginConstraints.match)
+  @LengthWithMessage(loginConstraints.minLength, loginConstraints.maxLength)
+  @IsStringWithTrim()
   login: string;
+
+  @LengthWithMessage(
+    passwordConstraints.minLength,
+    passwordConstraints.maxLength,
+  )
+  @IsStringWithTrim()
   password: string;
+
+  @MatchesWithMessage(emailConstraints.match)
+  @IsStringWithTrim()
   email: string;
 }
 

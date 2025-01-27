@@ -132,6 +132,7 @@ window.onload = function() {
               "required": true,
               "in": "query",
               "schema": {
+                "minimum": 1,
                 "default": 1,
                 "type": "number"
               }
@@ -141,6 +142,7 @@ window.onload = function() {
               "required": true,
               "in": "query",
               "schema": {
+                "minimum": 1,
                 "default": 10,
                 "type": "number"
               }
@@ -230,6 +232,7 @@ window.onload = function() {
               "required": true,
               "in": "query",
               "schema": {
+                "minimum": 1,
                 "default": 1,
                 "type": "number"
               }
@@ -239,6 +242,7 @@ window.onload = function() {
               "required": true,
               "in": "query",
               "schema": {
+                "minimum": 1,
                 "default": 10,
                 "type": "number"
               }
@@ -393,6 +397,7 @@ window.onload = function() {
               "required": true,
               "in": "query",
               "schema": {
+                "minimum": 1,
                 "default": 1,
                 "type": "number"
               }
@@ -402,6 +407,7 @@ window.onload = function() {
               "required": true,
               "in": "query",
               "schema": {
+                "minimum": 1,
                 "default": 10,
                 "type": "number"
               }
@@ -481,6 +487,7 @@ window.onload = function() {
               "required": true,
               "in": "query",
               "schema": {
+                "minimum": 1,
                 "default": 1,
                 "type": "number"
               }
@@ -490,6 +497,7 @@ window.onload = function() {
               "required": true,
               "in": "query",
               "schema": {
+                "minimum": 1,
                 "default": 10,
                 "type": "number"
               }
@@ -650,6 +658,7 @@ window.onload = function() {
               "required": true,
               "in": "query",
               "schema": {
+                "minimum": 1,
                 "default": 1,
                 "type": "number"
               }
@@ -659,6 +668,7 @@ window.onload = function() {
               "required": true,
               "in": "query",
               "schema": {
+                "minimum": 1,
                 "default": 10,
                 "type": "number"
               }

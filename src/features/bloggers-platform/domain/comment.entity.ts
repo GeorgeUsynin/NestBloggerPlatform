@@ -11,7 +11,7 @@ export enum DeletionStatus {
 // The timestamp flag automatically adds the updatedAt and createdAt fields
 @Schema({ timestamps: true })
 export class Comment {
-  @Prop({ type: String, minlength: 20, maxlength: 300, required: true })
+  @Prop({ type: String, minLength: 20, maxLength: 300, required: true })
   content: string;
 
   @Prop({
