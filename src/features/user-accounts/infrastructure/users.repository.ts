@@ -5,7 +5,8 @@ import {
   UserDocument,
   UserModelType,
 } from '../domain/user.entity';
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
+import { NotFoundDomainException } from '../../../core/exceptions/domain-exceptions';
 
 @Injectable()
 export class UsersRepository {
@@ -19,11 +20,16 @@ export class UsersRepository {
     });
 
     if (!user) {
-      //TODO: replace with domain exception
-      throw new NotFoundException('User not found');
+      throw NotFoundDomainException.create('User not found');
     }
 
     return user;
+  }
+
+  async findUserByLoginOrEmail(loginOrEmail: string) {
+    return this.UserModel.findOne({
+      $or: [{ login: loginOrEmail }, { email: loginOrEmail }],
+    });
   }
 
   async save(user: UserDocument) {

@@ -25,6 +25,41 @@ window.onload = function() {
           ]
         }
       },
+      "/auth/login": {
+        "post": {
+          "operationId": "AuthController_login",
+          "parameters": [],
+          "responses": {
+            "201": {
+              "description": ""
+            }
+          },
+          "tags": [
+            "Auth"
+          ]
+        }
+      },
+      "/auth/profile": {
+        "get": {
+          "operationId": "AuthController_getProfile",
+          "parameters": [],
+          "responses": {
+            "200": {
+              "description": "",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/UserContextDto"
+                  }
+                }
+              }
+            }
+          },
+          "tags": [
+            "Auth"
+          ]
+        }
+      },
       "/users/{id}": {
         "get": {
           "operationId": "UsersController_getById",
@@ -50,6 +85,11 @@ window.onload = function() {
               }
             }
           },
+          "security": [
+            {
+              "basicAuth": []
+            }
+          ],
           "tags": [
             "Users"
           ]
@@ -71,6 +111,11 @@ window.onload = function() {
               "description": ""
             }
           },
+          "security": [
+            {
+              "basicAuth": []
+            }
+          ],
           "tags": [
             "Users"
           ]
@@ -153,6 +198,11 @@ window.onload = function() {
               "description": ""
             }
           },
+          "security": [
+            {
+              "basicAuth": []
+            }
+          ],
           "tags": [
             "Users"
           ]
@@ -182,6 +232,11 @@ window.onload = function() {
               }
             }
           },
+          "security": [
+            {
+              "basicAuth": []
+            }
+          ],
           "tags": [
             "Users"
           ]
@@ -754,6 +809,10 @@ window.onload = function() {
         }
       },
       "schemas": {
+        "UserContextDto": {
+          "type": "object",
+          "properties": {}
+        },
         "UserViewDto": {
           "type": "object",
           "properties": {

@@ -5,14 +5,37 @@ import { UsersService } from './application/users.service';
 import { UserSchema, User } from './domain/user.entity';
 import { UsersRepository } from './infrastructure/users.repository';
 import { UsersQueryRepository } from './infrastructure/users.query-repository';
+import { AuthService } from './application/auth.service';
+import { CryptoService } from './application/crypto.service';
+import { AuthController } from './api/auth.controller';
+import { PassportModule } from '@nestjs/passport';
+import { LocalStrategy } from './guards/local/local.strategy';
+import { JwtStrategy } from './guards/bearer/jwt.strategy';
+import { JwtModule } from '@nestjs/jwt';
+import { ACCESS_TOKEN_EXPIRATION_TIME } from '../../constants';
 
 @Module({
   // This will allow injecting the UserModel into the providers in this module
   imports: [
     MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
+    PassportModule,
+    JwtModule.registerAsync({
+      useFactory: async () => ({
+        secret: process.env.JWT_SECRET,
+        signOptions: { expiresIn: ACCESS_TOKEN_EXPIRATION_TIME },
+      }),
+    }),
   ],
-  controllers: [UsersController],
-  providers: [UsersService, UsersRepository, UsersQueryRepository],
+  controllers: [AuthController, UsersController],
+  providers: [
+    AuthService,
+    CryptoService,
+    UsersService,
+    UsersRepository,
+    UsersQueryRepository,
+    LocalStrategy,
+    JwtStrategy,
+  ],
   exports: [MongooseModule],
   /* We re-export the MongooseModule if we want the models registered here to be injectable 
   into the services of other modules that import this module */

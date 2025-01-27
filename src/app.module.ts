@@ -6,7 +6,7 @@ import { BloggersPlatformModule } from './features/bloggers-platform/bloggers-pl
 import { TestingModule } from './features/testing/testing.module';
 import { CoreModule } from './core/core.module';
 import { ConfigModule } from '@nestjs/config';
-import { DB_NAME } from './constants/constants';
+import { DB_NAME } from './constants';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
 
@@ -20,7 +20,7 @@ import { join } from 'path';
     // Load environment variables
     ConfigModule.forRoot(),
     // Connect to MongoDB
-    MongooseModule.forRoot(process.env.MONGO_URL!, {
+    MongooseModule.forRoot('mongodb://localhost', {
       dbName: DB_NAME,
     }),
     CoreModule,
