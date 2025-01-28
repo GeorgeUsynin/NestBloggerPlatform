@@ -32,6 +32,14 @@ export class UsersRepository {
     });
   }
 
+  async findUserByLogin(login: string) {
+    return this.UserModel.findOne({ login });
+  }
+
+  async findUserByEmail(email: string) {
+    return this.UserModel.findOne({ email });
+  }
+
   async save(user: UserDocument) {
     await user.save();
   }

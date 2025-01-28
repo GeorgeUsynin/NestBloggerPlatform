@@ -1,6 +1,6 @@
 import {
+  Body,
   Controller,
-  // Get,
   HttpCode,
   HttpStatus,
   Post,
@@ -10,11 +10,15 @@ import { ExtractUserFromRequest } from '../guards/decorators/params/ExtractUserF
 import { UserContextDto } from '../guards/dto/user-context.dto';
 import { AuthService } from '../application/auth.service';
 import { LocalAuthGuard } from '../guards/local/local-auth.guard';
-// import { JwtAuthGuard } from '../guards/bearer/jwt-auth.guard';
+import { RegistrationService } from '../application/registration.service';
+import { CreateUserInputDto } from './dto/input-dto/create/users.input-dto';
 
 @Controller('auth')
 export class AuthController {
-  constructor(private authService: AuthService) {}
+  constructor(
+    private authService: AuthService,
+    private registrationService: RegistrationService,
+  ) {}
 
   @UseGuards(LocalAuthGuard)
   @HttpCode(HttpStatus.OK)
@@ -25,9 +29,9 @@ export class AuthController {
     return accessToken;
   }
 
-  // @UseGuards(JwtAuthGuard)
-  // @Get('profile')
-  // getProfile(@ExtractUserFromRequest() user: UserContextDto) {
-  //   return user;
-  // }
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @Post('registration')
+  async registration(@Body() body: CreateUserInputDto) {
+    await this.registrationService.registerUser(body);
+  }
 }

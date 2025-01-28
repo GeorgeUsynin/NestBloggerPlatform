@@ -20,7 +20,7 @@ export class UsersService {
       dto.password,
     );
 
-    const user = this.UserModel.createUser({
+    const user = this.UserModel.createConfirmedUser({
       email: dto.email,
       login: dto.login,
       password: passwordHash,

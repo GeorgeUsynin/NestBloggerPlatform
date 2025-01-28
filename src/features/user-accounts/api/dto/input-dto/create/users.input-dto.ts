@@ -3,12 +3,12 @@ import {
   IsStringWithTrim,
   LengthWithMessage,
   MatchesWithMessage,
-} from 'src/core/decorators/validation';
+} from '../../../../../../core/decorators/validation';
 import {
   emailConstraints,
   loginConstraints,
   passwordConstraints,
-} from 'src/features/user-accounts/domain/user.entity';
+} from '../../../../domain/user.entity';
 
 export class CreateUserInputDto extends CreateUserDto {
   // Call order: @IsStringWithTrim() -> @MatchesWithMessage() -> @LengthWithMessage()

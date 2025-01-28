@@ -1,6 +1,6 @@
 import { SchemaTimestampsConfig } from 'mongoose';
 import { PostDocument } from '../../../domain/post.entity';
-import { LikeStatus } from 'src/features/bloggers-platform/types';
+import { LikeStatus } from '../../../types';
 
 type NewestLikes = {
   addedAt: string;

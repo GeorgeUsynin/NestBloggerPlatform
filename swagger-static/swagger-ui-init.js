@@ -30,7 +30,7 @@ window.onload = function() {
           "operationId": "AuthController_login",
           "parameters": [],
           "responses": {
-            "201": {
+            "200": {
               "description": ""
             }
           },
@@ -39,20 +39,23 @@ window.onload = function() {
           ]
         }
       },
-      "/auth/profile": {
-        "get": {
-          "operationId": "AuthController_getProfile",
+      "/auth/registration": {
+        "post": {
+          "operationId": "AuthController_registration",
           "parameters": [],
-          "responses": {
-            "200": {
-              "description": "",
-              "content": {
-                "application/json": {
-                  "schema": {
-                    "$ref": "#/components/schemas/UserContextDto"
-                  }
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateUserInputDto"
                 }
               }
+            }
+          },
+          "responses": {
+            "204": {
+              "description": ""
             }
           },
           "tags": [
@@ -809,9 +812,24 @@ window.onload = function() {
         }
       },
       "schemas": {
-        "UserContextDto": {
+        "CreateUserInputDto": {
           "type": "object",
-          "properties": {}
+          "properties": {
+            "login": {
+              "type": "string"
+            },
+            "password": {
+              "type": "string"
+            },
+            "email": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "login",
+            "password",
+            "email"
+          ]
         },
         "UserViewDto": {
           "type": "object",
@@ -834,25 +852,6 @@ window.onload = function() {
             "login",
             "email",
             "createdAt"
-          ]
-        },
-        "CreateUserInputDto": {
-          "type": "object",
-          "properties": {
-            "login": {
-              "type": "string"
-            },
-            "password": {
-              "type": "string"
-            },
-            "email": {
-              "type": "string"
-            }
-          },
-          "required": [
-            "login",
-            "password",
-            "email"
           ]
         },
         "BlogViewDto": {

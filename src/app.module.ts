@@ -20,7 +20,7 @@ import { join } from 'path';
     // Load environment variables
     ConfigModule.forRoot(),
     // Connect to MongoDB
-    MongooseModule.forRoot('mongodb://localhost', {
+    MongooseModule.forRoot(process.env.MONGO_URL || 'mongodb://localhost', {
       dbName: DB_NAME,
     }),
     CoreModule,

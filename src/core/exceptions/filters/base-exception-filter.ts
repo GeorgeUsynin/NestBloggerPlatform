@@ -7,7 +7,7 @@ export type HttpResponseBody = {
   timestamp: string;
   path: string | null;
   message: string;
-  extensions: ErrorExtension[];
+  errorsMessages: ErrorExtension[];
   code: DomainExceptionCode | null;
 };
 
@@ -28,8 +28,8 @@ export abstract class BaseExceptionFilter implements ExceptionFilter {
       path: url,
       message: (exception as any).message || 'Internal server error',
       code: exception instanceof DomainException ? exception.code : null,
-      extensions:
-        exception instanceof DomainException ? exception.extensions : [],
+      errorsMessages:
+        exception instanceof DomainException ? exception.errorsMessages : [],
     };
   }
 }

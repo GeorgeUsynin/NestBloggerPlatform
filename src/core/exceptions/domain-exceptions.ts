@@ -11,7 +11,7 @@ export class DomainException extends Error {
   constructor(
     public message: string,
     public code: DomainExceptionCode,
-    public extensions: ErrorExtension[],
+    public errorsMessages: ErrorExtension[],
   ) {
     super(message);
   }
@@ -24,8 +24,8 @@ function ConcreteDomainExceptionFactory(
   code: DomainExceptionCode,
 ) {
   return class extends DomainException {
-    constructor(extensions: ErrorExtension[]) {
-      super(commonMessage, code, extensions);
+    constructor(errorsMessages: ErrorExtension[]) {
+      super(commonMessage, code, errorsMessages);
     }
 
     static create(message?: string, key?: string) {
@@ -54,8 +54,8 @@ export const UnauthorizedDomainException = ConcreteDomainExceptionFactory(
 //создание классов без миксинов
 
 // export class BadRequestDomainException extends DomainException {
-//   constructor(extensions: ErrorExtension[]) {
-//     super('Bad Request', DomainExceptionCode.BedRequest, extensions);
+//   constructor(errorsMessages: ErrorExtension[]) {
+//     super('Bad Request', DomainExceptionCode.BedRequest, errorsMessages);
 //   }
 //
 //   static create(message: string, key?: string) {
@@ -64,8 +64,8 @@ export const UnauthorizedDomainException = ConcreteDomainExceptionFactory(
 // }
 //
 // export class ForbiddenDomainException extends DomainException {
-//   constructor(extensions: ErrorExtension[]) {
-//     super('Forbidden', DomainExceptionCode.Forbidden, extensions);
+//   constructor(errorsMessages: ErrorExtension[]) {
+//     super('Forbidden', DomainExceptionCode.Forbidden, errorsMessages);
 //   }
 //
 //   static create(message?: string, key?: string) {
@@ -74,8 +74,8 @@ export const UnauthorizedDomainException = ConcreteDomainExceptionFactory(
 // }
 //
 // export class UnauthorizedDomainException extends DomainException {
-//   constructor(extensions: ErrorExtension[]) {
-//     super('Unauthorized', DomainExceptionCode.Unauthorized, extensions);
+//   constructor(errorsMessages: ErrorExtension[]) {
+//     super('Unauthorized', DomainExceptionCode.Unauthorized, errorsMessages);
 //   }
 //
 //   static create(message: string, key?: string) {

@@ -3,7 +3,7 @@ import {
   ValidationError,
   ValidationPipe,
 } from '@nestjs/common';
-import { BadRequestDomainException } from 'src/core/exceptions/domain-exceptions';
+import { BadRequestDomainException } from '../core/exceptions/domain-exceptions';
 
 type ErrorResponse = { field: string; message: string };
 

@@ -1,4 +1,4 @@
-import { IsStringWithMessage } from 'src/core/decorators/validation';
+import { IsStringWithMessage } from '../../../../../core/decorators/validation';
 import { BaseSortablePaginationParams } from '../../../../../core/dto/base.query-params.input-dto';
 import { IsEnum, IsOptional } from 'class-validator';
 

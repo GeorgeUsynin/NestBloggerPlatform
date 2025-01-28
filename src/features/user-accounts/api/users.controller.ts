@@ -36,7 +36,6 @@ export class UsersController {
     return this.usersQueryRepository.getByIdOrNotFoundFail(id);
   }
 
-  @Public()
   @Get()
   @HttpCode(HttpStatus.OK)
   async getAllUsers(
