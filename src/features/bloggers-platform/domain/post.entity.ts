@@ -32,6 +32,7 @@ export class Post {
       likesCount: Number,
     },
     default: { dislikesCount: 0, likesCount: 0 }, // Set default object
+    _id: false,
   })
   likesInfo: {
     dislikesCount: number;

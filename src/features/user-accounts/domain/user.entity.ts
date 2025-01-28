@@ -2,7 +2,11 @@ import { add } from 'date-fns/add';
 import { Schema, Prop, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, Model, SchemaTimestampsConfig } from 'mongoose';
 import { CreateUserDto } from './dto/create/users.create-dto';
-import { CONFIRMATION_CODE_EXPIRATION_TIME_IN_HOURS } from '../../../constants';
+import {
+  CONFIRMATION_CODE_EXPIRATION_TIME_IN_HOURS,
+  RECOVERY_CODE_EXPIRATION_TIME_IN_HOURS,
+} from '../../../constants';
+import { BadRequestDomainException } from '../../../core/exceptions/domain-exceptions';
 
 export enum DeletionStatus {
   NotDeleted = 'not-deleted',
@@ -24,27 +28,6 @@ export const emailConstraints = {
   match: /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/,
 };
 
-@Schema({ _id: false })
-class EmailConfirmation {
-  @Prop({ type: Boolean, default: false })
-  isConfirmed: boolean;
-
-  @Prop({ type: String, default: null })
-  confirmationCode: string | null;
-
-  @Prop({ type: Date, default: null })
-  expirationDate: Date | null;
-}
-
-@Schema({ _id: false })
-class PasswordRecovery {
-  @Prop({ type: String, default: null })
-  recoveryCode: string | null;
-
-  @Prop({ type: Date, default: null })
-  expirationDate: Date | null;
-}
-
 // The timestamp flag automatically adds the updatedAt and createdAt fields
 @Schema({ timestamps: true })
 export class User {
@@ -63,11 +46,40 @@ export class User {
   @Prop({ type: Date, default: null })
   deletedAt: Date | null;
 
-  @Prop({ type: EmailConfirmation, default: {} })
-  emailConfirmation: EmailConfirmation;
+  @Prop({
+    type: {
+      isConfirmed: Boolean,
+      confirmationCode: String,
+      expirationDate: Date,
+    },
+    default: {
+      isConfirmed: false,
+      confirmationCode: null,
+      expirationDate: null,
+    }, // Set default object
+    _id: false,
+  })
+  emailConfirmation: {
+    isConfirmed: boolean;
+    confirmationCode: string | null;
+    expirationDate: Date | null;
+  };
 
-  @Prop({ type: PasswordRecovery, default: {} })
-  passwordRecovery: PasswordRecovery;
+  @Prop({
+    type: {
+      recoveryCode: String,
+      expirationDate: Date,
+    },
+    default: {
+      recoveryCode: null,
+      expirationDate: null,
+    }, // Set default object
+    _id: false,
+  })
+  passwordRecovery: {
+    recoveryCode: string;
+    expirationDate: Date | null;
+  };
 
   static createUnconfirmedUser(dto: CreateUserDto): UserDocument {
     // UserDocument!
@@ -92,13 +104,66 @@ export class User {
 
   setConfirmationCode(code: string) {
     if (this.emailConfirmation.isConfirmed) {
-      throw new Error('The user has already been confirmed');
+      throw BadRequestDomainException.create(
+        'The user has already been confirmed',
+      );
+    }
+
+    if (!code) {
+      throw new Error('Code is not provided');
     }
 
     this.emailConfirmation.confirmationCode = code;
     this.emailConfirmation.expirationDate = add(new Date(), {
       hours: CONFIRMATION_CODE_EXPIRATION_TIME_IN_HOURS,
     });
+  }
+
+  confirmUserEmail(code: string) {
+    if (this.emailConfirmation.isConfirmed) {
+      throw BadRequestDomainException.create('Email already confirmed', 'code');
+    }
+
+    if (this.emailConfirmation.confirmationCode !== code) {
+      throw BadRequestDomainException.create('Invalid code', 'code');
+    }
+
+    if (!this.emailConfirmation.expirationDate) {
+      throw new Error('Expiration date for email confirmation is not set');
+    }
+
+    if (Date.now() > this.emailConfirmation.expirationDate.getTime()) {
+      throw BadRequestDomainException.create('Code expired', 'code');
+    }
+
+    this.emailConfirmation.isConfirmed = true;
+  }
+
+  setPasswordRecoveryCode(code: string) {
+    if (!code) {
+      throw new Error('Code is not provided');
+    }
+
+    this.passwordRecovery.recoveryCode = code;
+    this.passwordRecovery.expirationDate = add(new Date(), {
+      hours: RECOVERY_CODE_EXPIRATION_TIME_IN_HOURS,
+    });
+  }
+
+  changePassword(code: string, passwordHash: string) {
+    if (this.passwordRecovery.recoveryCode !== code) {
+      throw BadRequestDomainException.create('Invalid code', 'code');
+    }
+
+    if (!this.passwordRecovery.expirationDate) {
+      throw new Error('Expiration date for email confirmation is not set');
+    }
+
+    if (Date.now() > this.passwordRecovery.expirationDate.getTime()) {
+      throw BadRequestDomainException.create('Code expired', 'recoveryCode');
+    }
+
+    this.passwordHash = passwordHash;
   }
 
   makeDeleted() {

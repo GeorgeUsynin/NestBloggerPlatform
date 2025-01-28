@@ -20,6 +20,7 @@ export class Comment {
       userLogin: { type: String, required: true },
     },
     required: true,
+    _id: false,
   })
   commentatorInfo: {
     userId: string;
@@ -35,6 +36,7 @@ export class Comment {
       likesCount: Number,
     },
     default: { dislikesCount: 0, likesCount: 0 }, // Set default object
+    _id: false,
   })
   likesInfo: {
     dislikesCount: number;

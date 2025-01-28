@@ -5,7 +5,7 @@ import { CreateUserDto } from '../domain/dto/create/users.create-dto';
 import { UsersRepository } from '../infrastructure/users.repository';
 import { BadRequestDomainException } from '../../../core/exceptions/domain-exceptions';
 import { CryptoService } from './crypto.service';
-import { User, UserModelType } from '../domain/user.entity';
+import { User, UserDocument, UserModelType } from '../domain/user.entity';
 import { EmailManager } from '../../notification/email.manager';
 
 @Injectable()
@@ -17,7 +17,7 @@ export class RegistrationService {
     private emailManager: EmailManager,
   ) {}
 
-  async registerUser(payload: CreateUserDto) {
+  async registerUser(payload: CreateUserDto): Promise<void> {
     const { login, email, password } = payload;
 
     // check if user already exists
@@ -42,11 +42,41 @@ export class RegistrationService {
       password: passwordHash,
     });
 
+    await this.sendEmailConfirmationCode(newUser, email);
+  }
+
+  async registrationConfirmation(code: string): Promise<void> {
+    const user =
+      await this.usersRepository.findUserByConfirmationEmailCode(code);
+
+    if (!user) {
+      throw BadRequestDomainException.create('Invalid code', 'code');
+    }
+
+    user.confirmUserEmail(code);
+
+    await this.usersRepository.save(user);
+  }
+
+  async registrationEmailResending(email: string): Promise<void> {
+    const user = await this.usersRepository.findUserByEmail(email);
+
+    if (!user) {
+      throw BadRequestDomainException.create(
+        'User with this email not found',
+        'email',
+      );
+    }
+
+    await this.sendEmailConfirmationCode(user, email);
+  }
+
+  private async sendEmailConfirmationCode(user: UserDocument, email: string) {
     const confirmationCode = randomUUID();
 
-    newUser.setConfirmationCode(confirmationCode);
+    user.setConfirmationCode(confirmationCode);
 
-    await this.usersRepository.save(newUser);
+    await this.usersRepository.save(user);
 
     // sent confirmation email
     this.emailManager.sendPasswordConfirmationEmail(email, confirmationCode);

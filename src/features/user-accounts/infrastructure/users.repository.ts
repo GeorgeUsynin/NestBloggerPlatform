@@ -40,6 +40,16 @@ export class UsersRepository {
     return this.UserModel.findOne({ email });
   }
 
+  async findUserByConfirmationEmailCode(code: string) {
+    return this.UserModel.findOne({
+      'emailConfirmation.confirmationCode': code,
+    });
+  }
+
+  async findUserByRecoveryPasswordCode(code: string) {
+    return this.UserModel.findOne({ 'passwordRecovery.recoveryCode': code });
+  }
+
   async save(user: UserDocument) {
     await user.save();
   }

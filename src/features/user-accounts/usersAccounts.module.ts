@@ -8,6 +8,7 @@ import { UsersQueryRepository } from './infrastructure/users.query-repository';
 import { AuthService } from './application/auth.service';
 import { RegistrationService } from './application/registration.service';
 import { CryptoService } from './application/crypto.service';
+import { PasswordService } from './application/password.service';
 import { AuthController } from './api/auth.controller';
 import { PassportModule } from '@nestjs/passport';
 import { NotificationsModule } from '../notification/notification.module';
@@ -35,6 +36,7 @@ import { ACCESS_TOKEN_EXPIRATION_TIME } from '../../constants';
     CryptoService,
     RegistrationService,
     UsersService,
+    PasswordService,
     UsersRepository,
     UsersQueryRepository,
     LocalStrategy,
