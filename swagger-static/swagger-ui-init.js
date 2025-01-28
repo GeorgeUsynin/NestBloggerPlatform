@@ -225,6 +225,17 @@ window.onload = function() {
           "operationId": "UsersController_getAllUsers",
           "parameters": [
             {
+              "name": "searchLoginTerm",
+              "required": false,
+              "in": "query",
+              "description": "Search term for user Login: Login should contains this term in any position",
+              "schema": {
+                "nullable": true,
+                "default": null,
+                "type": "string"
+              }
+            },
+            {
               "name": "sortBy",
               "required": true,
               "in": "query",
@@ -236,16 +247,6 @@ window.onload = function() {
                   "login",
                   "email"
                 ]
-              }
-            },
-            {
-              "name": "searchLoginTerm",
-              "required": true,
-              "in": "query",
-              "schema": {
-                "nullable": true,
-                "default": null,
-                "type": "string"
               }
             },
             {

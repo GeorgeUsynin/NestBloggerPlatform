@@ -1,5 +1,7 @@
 import { SchemaTimestampsConfig } from 'mongoose';
 import { UserDocument } from '../../../domain/user.entity';
+import { ApiProperty } from '@nestjs/swagger';
+import { PaginatedViewDto } from 'src/core/dto/base.paginated.view-dto';
 
 export class UserViewDto {
   id: string;
@@ -17,4 +19,9 @@ export class UserViewDto {
 
     return dto;
   }
+}
+
+export class PaginatedUsersViewDto extends PaginatedViewDto<UserViewDto[]> {
+  @ApiProperty({ type: [UserViewDto] })
+  items: UserViewDto[];
 }

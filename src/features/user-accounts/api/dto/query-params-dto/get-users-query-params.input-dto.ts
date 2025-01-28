@@ -1,3 +1,4 @@
+import { ApiProperty } from '@nestjs/swagger';
 import { IsStringWithMessage } from '../../../../../core/decorators/validation';
 import { BaseSortablePaginationParams } from '../../../../../core/dto/base.query-params.input-dto';
 import { IsEnum, IsOptional } from 'class-validator';
@@ -13,6 +14,12 @@ export class GetUsersQueryParams extends BaseSortablePaginationParams<UsersSortB
   @IsEnum(UsersSortBy)
   sortBy = UsersSortBy.CreatedAt;
 
+  @ApiProperty({
+    description:
+      'Search term for user Login: Login should contains this term in any position',
+    default: null,
+    required: false,
+  })
   @IsStringWithMessage()
   @IsOptional()
   searchLoginTerm: string | null = null;
