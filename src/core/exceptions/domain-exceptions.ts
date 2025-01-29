@@ -1,6 +1,6 @@
 import { DomainExceptionCode } from './domain-exception-codes';
 
-export class ErrorExtension {
+export class ErrorsMessages {
   constructor(
     public message: string,
     public field: string | null = null,
@@ -11,7 +11,7 @@ export class DomainException extends Error {
   constructor(
     public message: string,
     public code: DomainExceptionCode,
-    public errorsMessages: ErrorExtension[],
+    public errorsMessages: ErrorsMessages[],
   ) {
     super(message);
   }
@@ -24,12 +24,12 @@ function ConcreteDomainExceptionFactory(
   code: DomainExceptionCode,
 ) {
   return class extends DomainException {
-    constructor(errorsMessages: ErrorExtension[]) {
+    constructor(errorsMessages: ErrorsMessages[]) {
       super(commonMessage, code, errorsMessages);
     }
 
     static create(message?: string, key?: string) {
-      return new this(message ? [new ErrorExtension(message, key)] : []);
+      return new this(message ? [new ErrorsMessages(message, key)] : []);
     }
   };
 }

@@ -1,6 +1,6 @@
 import { ArgumentsHost, ExceptionFilter } from '@nestjs/common';
 import { Request, Response } from 'express';
-import { DomainException, ErrorExtension } from '../domain-exceptions';
+import { DomainException, ErrorsMessages } from '../domain-exceptions';
 // import { DomainExceptionCode } from '../domain-exception-codes';
 
 export type HttpResponseBody = {
@@ -8,7 +8,7 @@ export type HttpResponseBody = {
   // path: string | null;
   // message: string;
   // code: DomainExceptionCode | null;
-  errorsMessages: ErrorExtension[];
+  errorsMessages: ErrorsMessages[];
 };
 
 export abstract class BaseExceptionFilter implements ExceptionFilter {

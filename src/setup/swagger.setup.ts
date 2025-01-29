@@ -5,7 +5,11 @@ import { GLOBAL_PREFIX } from '../constants';
 export function swaggerSetup(app: INestApplication) {
   const config = new DocumentBuilder()
     .setTitle('BLOGGER API')
-    .addBearerAuth()
+    .addBasicAuth()
+    .addBearerAuth({
+      type: 'http',
+      description: 'Enter JWT Bearer token only',
+    })
     .setVersion('1.0')
     .build();
 

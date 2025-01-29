@@ -21,8 +21,8 @@ import { BasicAuthGuard } from '../guards/basic/basic-auth.guard';
 import { Public } from '../guards/decorators/public.decorator';
 
 @Controller('users')
+@ApiBasicAuth()
 @UseGuards(BasicAuthGuard)
-@ApiBasicAuth('basicAuth')
 export class UsersController {
   constructor(
     private usersQueryRepository: UsersQueryRepository,

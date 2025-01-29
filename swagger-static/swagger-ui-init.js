@@ -31,16 +31,25 @@ window.onload = function() {
           "parameters": [],
           "responses": {
             "200": {
-              "description": "",
+              "description": "Success",
               "content": {
                 "application/json": {
                   "schema": {
-                    "$ref": "#/components/schemas/MeViewDto"
+                    "$ref": "#/components/schemas/SwaggerMeViewDto"
                   }
                 }
               }
+            },
+            "401": {
+              "description": "Unauthorized"
             }
           },
+          "security": [
+            {
+              "bearer": []
+            }
+          ],
+          "summary": "Get information about current user",
           "tags": [
             "Auth"
           ]
@@ -50,11 +59,42 @@ window.onload = function() {
         "post": {
           "operationId": "AuthController_login",
           "parameters": [],
-          "responses": {
-            "200": {
-              "description": ""
+          "requestBody": {
+            "required": false,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SwaggerLoginInputDto"
+                }
+              }
             }
           },
+          "responses": {
+            "200": {
+              "description": "Returns JWT accessToken (expired after 10 minutes) in body.",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/SwaggerLoginSuccessViewDto"
+                  }
+                }
+              }
+            },
+            "400": {
+              "description": "If the inputModel has incorrect values",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/SwaggerErrorsMessagesViewDto"
+                  }
+                }
+              }
+            },
+            "401": {
+              "description": "If the password or login or email is wrong"
+            }
+          },
+          "summary": "Try login user to the system",
           "tags": [
             "Auth"
           ]
@@ -65,20 +105,34 @@ window.onload = function() {
           "operationId": "AuthController_registration",
           "parameters": [],
           "requestBody": {
-            "required": true,
+            "required": false,
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/CreateUserInputDto"
+                  "$ref": "#/components/schemas/SwaggerCreateUserInputDto"
                 }
               }
             }
           },
           "responses": {
             "204": {
-              "description": ""
+              "description": "Input data is accepted. Email with confirmation code will be send to passed email address"
+            },
+            "400": {
+              "description": "If the inputModel has incorrect values",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/SwaggerErrorsMessagesViewDto"
+                  }
+                }
+              }
+            },
+            "429": {
+              "description": "More than 5 attempts from one IP-address during 10 seconds"
             }
           },
+          "summary": "Registration in the system. Email with confirmation code will be send to passed email address",
           "tags": [
             "Auth"
           ]
@@ -89,20 +143,34 @@ window.onload = function() {
           "operationId": "AuthController_registrationConfirmation",
           "parameters": [],
           "requestBody": {
-            "required": true,
+            "required": false,
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/RegistrationConfirmationInputDto"
+                  "$ref": "#/components/schemas/SwaggerRegistrationConfirmationInputDto"
                 }
               }
             }
           },
           "responses": {
             "204": {
-              "description": ""
+              "description": "Email was verified. Account was activated"
+            },
+            "400": {
+              "description": "If the inputModel has incorrect values",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/SwaggerErrorsMessagesViewDto"
+                  }
+                }
+              }
+            },
+            "429": {
+              "description": "More than 5 attempts from one IP-address during 10 seconds"
             }
           },
+          "summary": "Confirm registration",
           "tags": [
             "Auth"
           ]
@@ -113,20 +181,34 @@ window.onload = function() {
           "operationId": "AuthController_registrationEmailResending",
           "parameters": [],
           "requestBody": {
-            "required": true,
+            "required": false,
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/RegistrationEmailResendingInputDto"
+                  "$ref": "#/components/schemas/SwaggerRegistrationEmailResendingInputDto"
                 }
               }
             }
           },
           "responses": {
             "204": {
-              "description": ""
+              "description": "Input data is accepted.Email with confirmation code will be send to passed email address.Confirmation code should be inside link as query param, for example: https://some-front.com/confirm-registration?code=youtcodehere"
+            },
+            "400": {
+              "description": "If the inputModel has incorrect values",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/SwaggerErrorsMessagesViewDto"
+                  }
+                }
+              }
+            },
+            "429": {
+              "description": "More than 5 attempts from one IP-address during 10 seconds"
             }
           },
+          "summary": "Resend confirmation registration Email if user exists",
           "tags": [
             "Auth"
           ]
@@ -137,20 +219,34 @@ window.onload = function() {
           "operationId": "AuthController_passwordRecovery",
           "parameters": [],
           "requestBody": {
-            "required": true,
+            "required": false,
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/PasswordRecoveryInputDto"
+                  "$ref": "#/components/schemas/SwaggerPasswordRecoveryInputDto"
                 }
               }
             }
           },
           "responses": {
             "204": {
-              "description": ""
+              "description": "Even if current email is not registered (for prevent user's email detection)"
+            },
+            "400": {
+              "description": "If the inputModel has invalid email (for example 222^gmail.com)",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/SwaggerErrorsMessagesViewDto"
+                  }
+                }
+              }
+            },
+            "429": {
+              "description": "More than 5 attempts from one IP-address during 10 seconds"
             }
           },
+          "summary": "Password recovery via Email confirmation. Email should be sent with RecoveryCode inside",
           "tags": [
             "Auth"
           ]
@@ -161,20 +257,34 @@ window.onload = function() {
           "operationId": "AuthController_newPassword",
           "parameters": [],
           "requestBody": {
-            "required": true,
+            "required": false,
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/NewPasswordInputDto"
+                  "$ref": "#/components/schemas/SwaggerNewPasswordInputDto"
                 }
               }
             }
           },
           "responses": {
             "204": {
-              "description": ""
+              "description": "If code is valid and new password is accepted"
+            },
+            "400": {
+              "description": "If the inputModel has incorrect value (for incorrect password length) or RecoveryCode is incorrect or expired",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/SwaggerErrorsMessagesViewDto"
+                  }
+                }
+              }
+            },
+            "429": {
+              "description": "More than 5 attempts from one IP-address during 10 seconds"
             }
           },
+          "summary": "Confirm password recovery",
           "tags": [
             "Auth"
           ]
@@ -207,7 +317,7 @@ window.onload = function() {
           },
           "security": [
             {
-              "basicAuth": []
+              "basic": []
             }
           ],
           "tags": [
@@ -233,7 +343,7 @@ window.onload = function() {
           },
           "security": [
             {
-              "basicAuth": []
+              "basic": []
             }
           ],
           "tags": [
@@ -321,7 +431,7 @@ window.onload = function() {
           },
           "security": [
             {
-              "basicAuth": []
+              "basic": []
             }
           ],
           "tags": [
@@ -355,7 +465,7 @@ window.onload = function() {
           },
           "security": [
             {
-              "basicAuth": []
+              "basic": []
             }
           ],
           "tags": [
@@ -923,14 +1033,19 @@ window.onload = function() {
     "servers": [],
     "components": {
       "securitySchemes": {
+        "basic": {
+          "type": "http",
+          "scheme": "basic"
+        },
         "bearer": {
           "scheme": "bearer",
           "bearerFormat": "JWT",
-          "type": "http"
+          "type": "http",
+          "description": "Enter JWT Bearer token only"
         }
       },
       "schemas": {
-        "MeViewDto": {
+        "SwaggerMeViewDto": {
           "type": "object",
           "properties": {
             "userId": {
@@ -949,17 +1064,69 @@ window.onload = function() {
             "email"
           ]
         },
-        "CreateUserInputDto": {
+        "SwaggerLoginInputDto": {
+          "type": "object",
+          "properties": {}
+        },
+        "SwaggerLoginSuccessViewDto": {
+          "type": "object",
+          "properties": {
+            "accessToken": {
+              "type": "string",
+              "description": "JWT access token"
+            }
+          },
+          "required": [
+            "accessToken"
+          ]
+        },
+        "FieldErrorDto": {
+          "type": "object",
+          "properties": {
+            "message": {
+              "type": "string",
+              "nullable": true,
+              "description": "Message with error explanation for certain field"
+            },
+            "field": {
+              "type": "string",
+              "nullable": true,
+              "description": "What field/property of input model has error"
+            }
+          }
+        },
+        "SwaggerErrorsMessagesViewDto": {
+          "type": "object",
+          "properties": {
+            "errorsMessages": {
+              "nullable": true,
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/FieldErrorDto"
+              }
+            }
+          }
+        },
+        "SwaggerCreateUserInputDto": {
           "type": "object",
           "properties": {
             "login": {
-              "type": "string"
+              "type": "string",
+              "maxLength": 10,
+              "minLength": 3,
+              "pattern": "^[a-zA-Z0-9_-]*$",
+              "description": "must be unique"
             },
             "password": {
-              "type": "string"
+              "type": "string",
+              "maxLength": 20,
+              "minLength": 6
             },
             "email": {
-              "type": "string"
+              "type": "string",
+              "pattern": "^[w-.]+@([w-]+.)+[w-]{2,4}$",
+              "example": "example@example.com",
+              "description": "must be unique"
             }
           },
           "required": [
@@ -968,47 +1135,58 @@ window.onload = function() {
             "email"
           ]
         },
-        "RegistrationConfirmationInputDto": {
+        "SwaggerRegistrationConfirmationInputDto": {
           "type": "object",
           "properties": {
             "code": {
-              "type": "string"
+              "type": "string",
+              "description": "Code that be sent via Email inside link"
             }
           },
           "required": [
             "code"
           ]
         },
-        "RegistrationEmailResendingInputDto": {
+        "SwaggerRegistrationEmailResendingInputDto": {
           "type": "object",
           "properties": {
             "email": {
-              "type": "string"
+              "type": "string",
+              "pattern": "^[w-.]+@([w-]+.)+[w-]{2,4}$",
+              "example": "example@example.com",
+              "description": "Email of already registered but not confirmed user"
             }
           },
           "required": [
             "email"
           ]
         },
-        "PasswordRecoveryInputDto": {
+        "SwaggerPasswordRecoveryInputDto": {
           "type": "object",
           "properties": {
             "email": {
-              "type": "string"
+              "type": "string",
+              "pattern": "^[w-.]+@([w-]+.)+[w-]{2,4}$",
+              "example": "example@example.com",
+              "description": "Email of registered user"
             }
           },
           "required": [
             "email"
           ]
         },
-        "NewPasswordInputDto": {
+        "SwaggerNewPasswordInputDto": {
           "type": "object",
           "properties": {
             "newPassword": {
-              "type": "string"
+              "type": "string",
+              "maxLength": 20,
+              "minLength": 6,
+              "description": "New password"
             },
             "recoveryCode": {
-              "type": "string"
+              "type": "string",
+              "description": "Code that be sent via Email inside link"
             }
           },
           "required": [
@@ -1037,6 +1215,25 @@ window.onload = function() {
             "login",
             "email",
             "createdAt"
+          ]
+        },
+        "CreateUserInputDto": {
+          "type": "object",
+          "properties": {
+            "login": {
+              "type": "string"
+            },
+            "password": {
+              "type": "string"
+            },
+            "email": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "login",
+            "password",
+            "email"
           ]
         },
         "BlogViewDto": {

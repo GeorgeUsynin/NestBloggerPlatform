@@ -3,6 +3,7 @@ import { JwtService } from '@nestjs/jwt';
 import { UsersRepository } from '../infrastructure/users.repository';
 import { CryptoService } from './crypto.service';
 import { UserContextDto } from '../guards/dto/user-context.dto';
+import { LoginSuccessViewDto } from '../api/dto/view-dto/login-success.view-dto';
 
 @Injectable()
 export class AuthService {
@@ -35,9 +36,7 @@ export class AuthService {
     return { id: user._id.toString() };
   }
 
-  async login(userId: string): Promise<{
-    accessToken: string;
-  }> {
+  async login(userId: string): Promise<LoginSuccessViewDto> {
     const payload = { id: userId };
     const accessToken = this.jwtService.sign(payload);
 
