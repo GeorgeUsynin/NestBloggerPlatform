@@ -4,7 +4,7 @@ import { UsersController } from './api/users.controller';
 import { UsersService } from './application/users.service';
 import { UserSchema, User } from './domain/user.entity';
 import { UsersRepository } from './infrastructure/users.repository';
-import { UsersQueryRepository } from './infrastructure/users.query-repository';
+import { UsersQueryRepository } from './infrastructure/query/users.query-repository';
 import { AuthService } from './application/auth.service';
 import { RegistrationService } from './application/registration.service';
 import { CryptoService } from './application/crypto.service';
@@ -16,6 +16,7 @@ import { LocalStrategy } from './guards/local/local.strategy';
 import { JwtStrategy } from './guards/bearer/jwt.strategy';
 import { JwtModule } from '@nestjs/jwt';
 import { ACCESS_TOKEN_EXPIRATION_TIME } from '../../constants';
+import { AuthQueryRepository } from './infrastructure/query/auth.query-repository';
 
 @Module({
   // This will allow injecting the UserModel into the providers in this module
@@ -39,6 +40,7 @@ import { ACCESS_TOKEN_EXPIRATION_TIME } from '../../constants';
     PasswordService,
     UsersRepository,
     UsersQueryRepository,
+    AuthQueryRepository,
     LocalStrategy,
     JwtStrategy,
   ],

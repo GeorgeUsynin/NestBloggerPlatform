@@ -11,7 +11,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { ApiBasicAuth } from '@nestjs/swagger';
-import { UsersQueryRepository } from '../infrastructure/users.query-repository';
+import { UsersQueryRepository } from '../infrastructure/query/users.query-repository';
 import { UserViewDto } from './dto/view-dto/user.view-dto';
 import { UsersService } from '../application/users.service';
 import { CreateUserInputDto } from './dto/input-dto/create/users.input-dto';

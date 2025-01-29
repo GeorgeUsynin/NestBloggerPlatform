@@ -25,6 +25,27 @@ window.onload = function() {
           ]
         }
       },
+      "/auth/me": {
+        "get": {
+          "operationId": "AuthController_me",
+          "parameters": [],
+          "responses": {
+            "200": {
+              "description": "",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/MeViewDto"
+                  }
+                }
+              }
+            }
+          },
+          "tags": [
+            "Auth"
+          ]
+        }
+      },
       "/auth/login": {
         "post": {
           "operationId": "AuthController_login",
@@ -909,6 +930,25 @@ window.onload = function() {
         }
       },
       "schemas": {
+        "MeViewDto": {
+          "type": "object",
+          "properties": {
+            "userId": {
+              "type": "string"
+            },
+            "login": {
+              "type": "string"
+            },
+            "email": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "userId",
+            "login",
+            "email"
+          ]
+        },
         "CreateUserInputDto": {
           "type": "object",
           "properties": {
