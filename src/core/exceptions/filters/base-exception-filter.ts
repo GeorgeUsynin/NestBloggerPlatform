@@ -1,14 +1,14 @@
 import { ArgumentsHost, ExceptionFilter } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { DomainException, ErrorExtension } from '../domain-exceptions';
-import { DomainExceptionCode } from '../domain-exception-codes';
+// import { DomainExceptionCode } from '../domain-exception-codes';
 
 export type HttpResponseBody = {
-  timestamp: string;
-  path: string | null;
-  message: string;
+  // timestamp: string;
+  // path: string | null;
+  // message: string;
+  // code: DomainExceptionCode | null;
   errorsMessages: ErrorExtension[];
-  code: DomainExceptionCode | null;
 };
 
 export abstract class BaseExceptionFilter implements ExceptionFilter {
@@ -24,10 +24,10 @@ export abstract class BaseExceptionFilter implements ExceptionFilter {
 
   getDefaultHttpBody(url: string, exception: unknown): HttpResponseBody {
     return {
-      timestamp: new Date().toISOString(),
-      path: url,
-      message: (exception as any).message || 'Internal server error',
-      code: exception instanceof DomainException ? exception.code : null,
+      // timestamp: new Date().toISOString(),
+      // path: url,
+      // message: (exception as any).message || 'Internal server error',
+      // code: exception instanceof DomainException ? exception.code : null,
       errorsMessages:
         exception instanceof DomainException ? exception.errorsMessages : [],
     };
