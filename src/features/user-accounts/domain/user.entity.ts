@@ -106,6 +106,7 @@ export class User {
     if (this.emailConfirmation.isConfirmed) {
       throw BadRequestDomainException.create(
         'The user has already been confirmed',
+        'email',
       );
     }
 

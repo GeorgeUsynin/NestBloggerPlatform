@@ -42,7 +42,7 @@ export class AuthController {
   @Post('login')
   @HttpCode(HttpStatus.OK)
   async login(@ExtractUserFromRequest() user: UserContextDto): Promise<{
-    access_token: string;
+    accessToken: string;
   }> {
     const accessToken = await this.authService.login(user.id);
 
