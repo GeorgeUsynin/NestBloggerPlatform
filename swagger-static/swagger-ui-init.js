@@ -305,7 +305,7 @@ window.onload = function() {
           ],
           "responses": {
             "200": {
-              "description": "",
+              "description": "Success",
               "content": {
                 "application/json": {
                   "schema": {
@@ -313,6 +313,9 @@ window.onload = function() {
                   }
                 }
               }
+            },
+            "404": {
+              "description": "Not Found"
             }
           },
           "security": [
@@ -320,6 +323,7 @@ window.onload = function() {
               "basic": []
             }
           ],
+          "summary": "Returns user by id",
           "tags": [
             "Users"
           ]
@@ -338,7 +342,13 @@ window.onload = function() {
           ],
           "responses": {
             "204": {
-              "description": ""
+              "description": "No Content"
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "404": {
+              "description": "If specified user is not exists"
             }
           },
           "security": [
@@ -346,6 +356,7 @@ window.onload = function() {
               "basic": []
             }
           ],
+          "summary": "Delete user specified by id",
           "tags": [
             "Users"
           ]
@@ -356,19 +367,43 @@ window.onload = function() {
           "operationId": "UsersController_getAllUsers",
           "parameters": [
             {
-              "name": "searchLoginTerm",
+              "name": "pageNumber",
               "required": false,
               "in": "query",
-              "description": "Search term for user Login: Login should contains this term in any position",
+              "description": "pageNumber is number of portions that should be returned",
               "schema": {
-                "nullable": true,
-                "default": null,
-                "type": "string"
+                "minimum": 1,
+                "default": 1,
+                "type": "number"
+              }
+            },
+            {
+              "name": "pageSize",
+              "required": false,
+              "in": "query",
+              "description": "pageSize is portions size that should be returned",
+              "schema": {
+                "minimum": 1,
+                "default": 10,
+                "type": "number"
+              }
+            },
+            {
+              "name": "sortDirection",
+              "required": false,
+              "in": "query",
+              "schema": {
+                "default": "desc",
+                "type": "string",
+                "enum": [
+                  "asc",
+                  "desc"
+                ]
               }
             },
             {
               "name": "sortBy",
-              "required": true,
+              "required": false,
               "in": "query",
               "schema": {
                 "default": "createdAt",
@@ -381,9 +416,10 @@ window.onload = function() {
               }
             },
             {
-              "name": "searchEmailTerm",
-              "required": true,
+              "name": "searchLoginTerm",
+              "required": false,
               "in": "query",
+              "description": "Search term for user Login: Login should contains this term in any position",
               "schema": {
                 "nullable": true,
                 "default": null,
@@ -391,42 +427,44 @@ window.onload = function() {
               }
             },
             {
-              "name": "sortDirection",
-              "required": true,
+              "name": "searchEmailTerm",
+              "required": false,
               "in": "query",
+              "description": "Search term for user Email: Email should contains this term in any position",
               "schema": {
-                "default": "desc",
-                "type": "string",
-                "enum": [
-                  "asc",
-                  "desc"
-                ]
-              }
-            },
-            {
-              "name": "pageNumber",
-              "required": true,
-              "in": "query",
-              "schema": {
-                "minimum": 1,
-                "default": 1,
-                "type": "number"
-              }
-            },
-            {
-              "name": "pageSize",
-              "required": true,
-              "in": "query",
-              "schema": {
-                "minimum": 1,
-                "default": 10,
-                "type": "number"
+                "nullable": true,
+                "default": null,
+                "type": "string"
               }
             }
           ],
           "responses": {
             "200": {
-              "description": ""
+              "description": "Success",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "allOf": [
+                      {
+                        "$ref": "#/components/schemas/PaginatedViewDto"
+                      },
+                      {
+                        "properties": {
+                          "items": {
+                            "type": "array",
+                            "items": {
+                              "$ref": "#/components/schemas/UserViewDto"
+                            }
+                          }
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
+            },
+            "401": {
+              "description": "Unauthorized"
             }
           },
           "security": [
@@ -434,6 +472,7 @@ window.onload = function() {
               "basic": []
             }
           ],
+          "summary": "Returns all users",
           "tags": [
             "Users"
           ]
@@ -442,25 +481,32 @@ window.onload = function() {
           "operationId": "UsersController_createUser",
           "parameters": [],
           "requestBody": {
-            "required": true,
+            "required": false,
+            "description": "Data for constructing new user",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/CreateUserInputDto"
+                  "$ref": "#/components/schemas/SwaggerCreateUserInputDto"
                 }
               }
             }
           },
           "responses": {
             "201": {
-              "description": "",
+              "description": "Returns the newly created user"
+            },
+            "400": {
+              "description": "If the inputModel has incorrect values <br/> <br/> <i>Note: If the error should be in the BLL, for example, \"the email address is not unique\", do not try to mix this error with input validation errors in the middleware, just return one element in the errors array</i>",
               "content": {
                 "application/json": {
                   "schema": {
-                    "$ref": "#/components/schemas/UserViewDto"
+                    "$ref": "#/components/schemas/SwaggerErrorsMessagesViewDto"
                   }
                 }
               }
+            },
+            "401": {
+              "description": "Unauthorized"
             }
           },
           "security": [
@@ -468,6 +514,7 @@ window.onload = function() {
               "basic": []
             }
           ],
+          "summary": "Add new user to the system",
           "tags": [
             "Users"
           ]
@@ -478,31 +525,30 @@ window.onload = function() {
           "operationId": "BlogsController_getAllBlogs",
           "parameters": [
             {
-              "name": "sortBy",
-              "required": true,
+              "name": "pageNumber",
+              "required": false,
               "in": "query",
+              "description": "pageNumber is number of portions that should be returned",
               "schema": {
-                "default": "createdAt",
-                "type": "string",
-                "enum": [
-                  "createdAt",
-                  "name"
-                ]
+                "minimum": 1,
+                "default": 1,
+                "type": "number"
               }
             },
             {
-              "name": "searchNameTerm",
-              "required": true,
+              "name": "pageSize",
+              "required": false,
               "in": "query",
+              "description": "pageSize is portions size that should be returned",
               "schema": {
-                "nullable": true,
-                "default": null,
-                "type": "string"
+                "minimum": 1,
+                "default": 10,
+                "type": "number"
               }
             },
             {
               "name": "sortDirection",
-              "required": true,
+              "required": false,
               "in": "query",
               "schema": {
                 "default": "desc",
@@ -514,23 +560,21 @@ window.onload = function() {
               }
             },
             {
-              "name": "pageNumber",
-              "required": true,
+              "name": "sortBy",
+              "required": false,
               "in": "query",
               "schema": {
-                "minimum": 1,
-                "default": 1,
-                "type": "number"
+                "$ref": "#/components/schemas/Object"
               }
             },
             {
-              "name": "pageSize",
+              "name": "searchNameTerm",
               "required": true,
               "in": "query",
               "schema": {
-                "minimum": 1,
-                "default": 10,
-                "type": "number"
+                "nullable": true,
+                "default": null,
+                "type": "string"
               }
             }
           ],
@@ -660,8 +704,30 @@ window.onload = function() {
           "operationId": "BlogsController_getAllPostsByBlogId",
           "parameters": [
             {
+              "name": "pageNumber",
+              "required": false,
+              "in": "query",
+              "description": "pageNumber is number of portions that should be returned",
+              "schema": {
+                "minimum": 1,
+                "default": 1,
+                "type": "number"
+              }
+            },
+            {
+              "name": "pageSize",
+              "required": false,
+              "in": "query",
+              "description": "pageSize is portions size that should be returned",
+              "schema": {
+                "minimum": 1,
+                "default": 10,
+                "type": "number"
+              }
+            },
+            {
               "name": "sortDirection",
-              "required": true,
+              "required": false,
               "in": "query",
               "schema": {
                 "default": "desc",
@@ -674,28 +740,10 @@ window.onload = function() {
             },
             {
               "name": "sortBy",
-              "required": true,
-              "in": "query",
-              "schema": {}
-            },
-            {
-              "name": "pageNumber",
-              "required": true,
+              "required": false,
               "in": "query",
               "schema": {
-                "minimum": 1,
-                "default": 1,
-                "type": "number"
-              }
-            },
-            {
-              "name": "pageSize",
-              "required": true,
-              "in": "query",
-              "schema": {
-                "minimum": 1,
-                "default": 10,
-                "type": "number"
+                "$ref": "#/components/schemas/Object"
               }
             },
             {
@@ -750,8 +798,30 @@ window.onload = function() {
           "operationId": "PostsController_getAllPosts",
           "parameters": [
             {
+              "name": "pageNumber",
+              "required": false,
+              "in": "query",
+              "description": "pageNumber is number of portions that should be returned",
+              "schema": {
+                "minimum": 1,
+                "default": 1,
+                "type": "number"
+              }
+            },
+            {
+              "name": "pageSize",
+              "required": false,
+              "in": "query",
+              "description": "pageSize is portions size that should be returned",
+              "schema": {
+                "minimum": 1,
+                "default": 10,
+                "type": "number"
+              }
+            },
+            {
               "name": "sortDirection",
-              "required": true,
+              "required": false,
               "in": "query",
               "schema": {
                 "default": "desc",
@@ -764,28 +834,10 @@ window.onload = function() {
             },
             {
               "name": "sortBy",
-              "required": true,
-              "in": "query",
-              "schema": {}
-            },
-            {
-              "name": "pageNumber",
-              "required": true,
+              "required": false,
               "in": "query",
               "schema": {
-                "minimum": 1,
-                "default": 1,
-                "type": "number"
-              }
-            },
-            {
-              "name": "pageSize",
-              "required": true,
-              "in": "query",
-              "schema": {
-                "minimum": 1,
-                "default": 10,
-                "type": "number"
+                "$ref": "#/components/schemas/Object"
               }
             }
           ],
@@ -915,20 +967,30 @@ window.onload = function() {
           "operationId": "PostsController_getAllCommentsByPostId",
           "parameters": [
             {
-              "name": "sortBy",
-              "required": true,
+              "name": "pageNumber",
+              "required": false,
               "in": "query",
+              "description": "pageNumber is number of portions that should be returned",
               "schema": {
-                "default": "createdAt",
-                "type": "string",
-                "enum": [
-                  "createdAt"
-                ]
+                "minimum": 1,
+                "default": 1,
+                "type": "number"
+              }
+            },
+            {
+              "name": "pageSize",
+              "required": false,
+              "in": "query",
+              "description": "pageSize is portions size that should be returned",
+              "schema": {
+                "minimum": 1,
+                "default": 10,
+                "type": "number"
               }
             },
             {
               "name": "sortDirection",
-              "required": true,
+              "required": false,
               "in": "query",
               "schema": {
                 "default": "desc",
@@ -940,23 +1002,11 @@ window.onload = function() {
               }
             },
             {
-              "name": "pageNumber",
-              "required": true,
+              "name": "sortBy",
+              "required": false,
               "in": "query",
               "schema": {
-                "minimum": 1,
-                "default": 1,
-                "type": "number"
-              }
-            },
-            {
-              "name": "pageSize",
-              "required": true,
-              "in": "query",
-              "schema": {
-                "minimum": 1,
-                "default": 10,
-                "type": "number"
+                "$ref": "#/components/schemas/Object"
               }
             },
             {
@@ -1014,9 +1064,10 @@ window.onload = function() {
           "parameters": [],
           "responses": {
             "204": {
-              "description": ""
+              "description": "All data is deleted"
             }
           },
+          "summary": "Clear database: delete all data from all tables/collections",
           "tags": [
             "Testing"
           ]
@@ -1066,7 +1117,18 @@ window.onload = function() {
         },
         "SwaggerLoginInputDto": {
           "type": "object",
-          "properties": {}
+          "properties": {
+            "loginOrEmail": {
+              "type": "string"
+            },
+            "password": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "loginOrEmail",
+            "password"
+          ]
         },
         "SwaggerLoginSuccessViewDto": {
           "type": "object",
@@ -1207,7 +1269,8 @@ window.onload = function() {
               "type": "string"
             },
             "createdAt": {
-              "type": "object"
+              "format": "date-time",
+              "type": "string"
             }
           },
           "required": [
@@ -1217,24 +1280,40 @@ window.onload = function() {
             "createdAt"
           ]
         },
-        "CreateUserInputDto": {
+        "PaginatedViewDto": {
           "type": "object",
           "properties": {
-            "login": {
-              "type": "string"
+            "totalCount": {
+              "type": "number",
+              "default": 0
             },
-            "password": {
-              "type": "string"
+            "pagesCount": {
+              "type": "number",
+              "default": 0
             },
-            "email": {
-              "type": "string"
+            "page": {
+              "type": "number",
+              "default": 0
+            },
+            "pageSize": {
+              "type": "number",
+              "default": 0
+            },
+            "items": {
+              "type": "object"
             }
           },
           "required": [
-            "login",
-            "password",
-            "email"
+            "totalCount",
+            "pagesCount",
+            "page",
+            "pageSize",
+            "items"
           ]
+        },
+        "Object": {
+          "type": "object",
+          "properties": {}
         },
         "BlogViewDto": {
           "type": "object",
@@ -1481,7 +1560,23 @@ window.onload = function() {
       }
     }
   },
-  "customOptions": {}
+  "customOptions": {
+    "operationsSorter": function (a, b) {
+                const order = {
+                    get: '0',
+                    post: '1',
+                    patch: '2',
+                    put: '3',
+                    delete: '4',
+                    head: '5',
+                    options: '6',
+                    connect: '7',
+                    trace: '8',
+                };
+                return (order[a.get('method')].localeCompare(order[b.get('method')]) ||
+                    a.get('path').localeCompare(b.get('path')));
+            }
+  }
 };
   url = options.swaggerUrl || url
   let urls = options.swaggerUrls

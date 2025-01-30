@@ -7,11 +7,14 @@ import {
   ApiProperty,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
-import { LoginSuccessViewDto } from '../dto/view-dto/login-success.view-dto';
-import { SwaggerErrorsMessagesViewDto } from '../../../../core/dto/swagger-errors-messages.view-dto';
+import { LoginSuccessViewDto } from '../../dto/view-dto/login-success.view-dto';
+import { SwaggerErrorsMessagesViewDto } from '../../../../../core/dto/swagger-errors-messages.view-dto';
 
 class SwaggerLoginInputDto {
+  @ApiProperty({ type: String })
   loginOrEmail: string;
+
+  @ApiProperty({ type: String })
   password: string;
 }
 

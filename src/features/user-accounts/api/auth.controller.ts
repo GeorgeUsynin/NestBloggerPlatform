@@ -30,7 +30,7 @@ import {
   RegistrationConfirmationApi,
   RegistrationEmailResendingApi,
 } from './swagger';
-import { NewPasswordApi } from './swagger/new-password.decorator';
+import { NewPasswordApi } from './swagger/auth/new-password.decorator';
 import { ApiBearerAuth } from '@nestjs/swagger';
 
 @Controller('auth')

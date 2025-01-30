@@ -5,7 +5,7 @@ import {
   ApiProperty,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
-import { MeViewDto } from '../dto/view-dto/user.view-dto';
+import { MeViewDto } from '../../dto/view-dto/user.view-dto';
 
 class SwaggerMeViewDto implements MeViewDto {
   @ApiProperty({ type: String })

@@ -7,8 +7,8 @@ import {
   ApiProperty,
   ApiTooManyRequestsResponse,
 } from '@nestjs/swagger';
-import { SwaggerErrorsMessagesViewDto } from '../../../../core/dto/swagger-errors-messages.view-dto';
-import { RegistrationEmailResendingInputDto } from '../dto/input-dto/registration-email-resending.input-dto';
+import { SwaggerErrorsMessagesViewDto } from '../../../../../core/dto/swagger-errors-messages.view-dto';
+import { RegistrationEmailResendingInputDto } from '../../dto/input-dto/registration-email-resending.input-dto';
 
 class SwaggerRegistrationEmailResendingInputDto
   implements RegistrationEmailResendingInputDto

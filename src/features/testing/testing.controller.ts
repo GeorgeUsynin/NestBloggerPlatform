@@ -7,6 +7,7 @@ import {
   Comment,
   CommentModelType,
 } from '../bloggers-platform/domain/comment.entity';
+import { TestingAllDataApi } from './swagger/testing-all-data.decorator';
 
 @Controller('testing')
 export class TestingController {
@@ -23,6 +24,7 @@ export class TestingController {
 
   @Delete('all-data')
   @HttpCode(HttpStatus.NO_CONTENT)
+  @TestingAllDataApi()
   async deleteAll() {
     await this.UserModel.deleteMany();
     await this.BlogModel.deleteMany();

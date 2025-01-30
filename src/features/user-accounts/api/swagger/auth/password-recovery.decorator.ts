@@ -7,8 +7,8 @@ import {
   ApiProperty,
   ApiTooManyRequestsResponse,
 } from '@nestjs/swagger';
-import { SwaggerErrorsMessagesViewDto } from '../../../../core/dto/swagger-errors-messages.view-dto';
-import { PasswordRecoveryInputDto } from '../dto/input-dto/password-recovery.input-dto';
+import { SwaggerErrorsMessagesViewDto } from '../../../../../core/dto/swagger-errors-messages.view-dto';
+import { PasswordRecoveryInputDto } from '../../dto/input-dto/password-recovery.input-dto';
 
 class SwaggerPasswordRecoveryInputDto implements PasswordRecoveryInputDto {
   @ApiProperty({

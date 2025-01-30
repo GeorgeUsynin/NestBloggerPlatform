@@ -7,10 +7,10 @@ import {
   ApiProperty,
   ApiTooManyRequestsResponse,
 } from '@nestjs/swagger';
-import { SwaggerErrorsMessagesViewDto } from '../../../../core/dto/swagger-errors-messages.view-dto';
-import { CreateUserInputDto } from '../dto/input-dto/create/users.input-dto';
+import { SwaggerErrorsMessagesViewDto } from '../../../../../core/dto/swagger-errors-messages.view-dto';
+import { CreateUserInputDto } from '../../dto/input-dto/create/users.input-dto';
 
-class SwaggerCreateUserInputDto implements CreateUserInputDto {
+export class SwaggerCreateUserInputDto implements CreateUserInputDto {
   @ApiProperty({
     type: String,
     maxLength: 10,

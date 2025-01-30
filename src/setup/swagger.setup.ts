@@ -14,7 +14,27 @@ export function swaggerSetup(app: INestApplication) {
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
+
   SwaggerModule.setup(GLOBAL_PREFIX, app, document, {
     customSiteTitle: 'Blogger Swagger',
+    swaggerOptions: {
+      operationsSorter: function (a, b) {
+        const order = {
+          get: '0',
+          post: '1',
+          patch: '2',
+          put: '3',
+          delete: '4',
+          head: '5',
+          options: '6',
+          connect: '7',
+          trace: '8',
+        };
+        return (
+          order[a.get('method')].localeCompare(order[b.get('method')]) ||
+          a.get('path').localeCompare(b.get('path'))
+        );
+      },
+    },
   });
 }

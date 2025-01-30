@@ -19,6 +19,12 @@ import { GetUsersQueryParams } from './dto/query-params-dto/get-users-query-para
 import { PaginatedViewDto } from '../../../core/dto/base.paginated.view-dto';
 import { BasicAuthGuard } from '../guards/basic/basic-auth.guard';
 import { Public } from '../guards/decorators/public.decorator';
+import {
+  CreateUserApi,
+  DeleteUserApi,
+  GetAllUsersApi,
+  GetUserApi,
+} from './swagger';
 
 @Controller('users')
 @ApiBasicAuth()
@@ -32,12 +38,14 @@ export class UsersController {
   @Public()
   @Get(':id')
   @HttpCode(HttpStatus.OK)
+  @GetUserApi()
   async getById(@Param('id') id: string): Promise<UserViewDto> {
     return this.usersQueryRepository.getByIdOrNotFoundFail(id);
   }
 
   @Get()
   @HttpCode(HttpStatus.OK)
+  @GetAllUsersApi()
   async getAllUsers(
     @Query() query: GetUsersQueryParams,
   ): Promise<PaginatedViewDto<UserViewDto[]>> {
@@ -46,6 +54,7 @@ export class UsersController {
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
+  @CreateUserApi()
   async createUser(@Body() body: CreateUserInputDto): Promise<UserViewDto> {
     const userId = await this.usersService.createUser(body);
 
@@ -54,6 +63,7 @@ export class UsersController {
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
+  @DeleteUserApi()
   async deleteUser(@Param('id') id: string): Promise<void> {
     return this.usersService.deleteUser(id);
   }

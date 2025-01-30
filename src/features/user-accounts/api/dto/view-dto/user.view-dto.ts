@@ -1,12 +1,18 @@
 import { SchemaTimestampsConfig } from 'mongoose';
 import { UserDocument } from '../../../domain/user.entity';
 import { ApiProperty, OmitType } from '@nestjs/swagger';
-import { PaginatedViewDto } from 'src/core/dto/base.paginated.view-dto';
 
 export class UserViewDto {
+  @ApiProperty({ type: String })
   id: string;
+
+  @ApiProperty({ type: String })
   login: string;
+
+  @ApiProperty({ type: String })
   email: string;
+
+  @ApiProperty({ type: Date })
   createdAt: SchemaTimestampsConfig['createdAt'];
 
   static mapToView(user: UserDocument): UserViewDto {
@@ -19,11 +25,6 @@ export class UserViewDto {
 
     return dto;
   }
-}
-
-export class PaginatedUsersViewDto extends PaginatedViewDto<UserViewDto[]> {
-  @ApiProperty({ type: [UserViewDto] })
-  items: UserViewDto[];
 }
 
 export class MeViewDto extends OmitType(UserViewDto, [
