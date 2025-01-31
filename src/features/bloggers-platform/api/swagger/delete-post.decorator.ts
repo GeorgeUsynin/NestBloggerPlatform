@@ -7,12 +7,12 @@ import {
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 
-export const DeleteUserApi = () => {
+export const DeletePostApi = () => {
   return applyDecorators(
     ApiOperation({
-      summary: 'Delete user specified by id',
+      summary: 'Delete post specified by id',
     }),
-    ApiParam({ name: 'id', type: String, description: 'User id' }),
+    ApiParam({ name: 'id', type: String, description: 'Post id' }),
     ApiNoContentResponse({
       description: 'No Content',
     }),
@@ -20,7 +20,7 @@ export const DeleteUserApi = () => {
       description: 'Unauthorized',
     }),
     ApiNotFoundResponse({
-      description: 'If specified user is not exists',
+      description: 'Not Found',
     }),
   );
 };

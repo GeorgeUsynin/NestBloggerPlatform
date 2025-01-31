@@ -20,6 +20,14 @@ import { UpdatePostInputDto } from './dto/input-dto/update/posts.input-dto';
 import { PostsService } from '../application/posts.service';
 import { CommentViewDto } from './dto/view-dto/comments.view-dto';
 import { CommentsQueryRepository } from '../infrastructure/comments.query-repository';
+import {
+  CreatePostApi,
+  GetAllPostsApi,
+  GetPostApi,
+  UpdatePostApi,
+  DeletePostApi,
+  GetAllCommentsByPostIdApi,
+} from './swagger';
 
 @Controller('posts')
 export class PostsController {
@@ -31,6 +39,7 @@ export class PostsController {
 
   @Get()
   @HttpCode(HttpStatus.OK)
+  @GetAllPostsApi()
   async getAllPosts(
     @Query() query: GetPostsQueryParams,
   ): Promise<PaginatedViewDto<PostViewDto[]>> {
@@ -39,21 +48,24 @@ export class PostsController {
 
   @Get(':id')
   @HttpCode(HttpStatus.OK)
+  @GetPostApi()
   async getPostById(@Param('id') id: string): Promise<PostViewDto> {
     return this.postsQueryRepository.getByIdOrNotFoundFail(id);
   }
 
-  @Get(':id/comments')
+  @Get(':postId/comments')
   @HttpCode(HttpStatus.OK)
+  @GetAllCommentsByPostIdApi()
   async getAllCommentsByPostId(
     @Query() query: GetCommentsQueryParams,
-    @Param('id') id: string,
+    @Param('postId') postId: string,
   ): Promise<PaginatedViewDto<CommentViewDto[]>> {
-    return this.commentsQueryRepository.getAllCommentsByPostId(query, id);
+    return this.commentsQueryRepository.getAllCommentsByPostId(query, postId);
   }
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
+  @CreatePostApi()
   async createPost(@Body() payload: CreatePostInputDto): Promise<PostViewDto> {
     const postId = await this.postsService.createPost(payload);
 
@@ -62,6 +74,7 @@ export class PostsController {
 
   @Put(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
+  @UpdatePostApi()
   async updatePostById(
     @Param('id') id: string,
     @Body() payload: UpdatePostInputDto,
@@ -71,6 +84,7 @@ export class PostsController {
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
+  @DeletePostApi()
   async deletePostById(@Param('id') id: string) {
     await this.postsService.deletePostById(id);
   }

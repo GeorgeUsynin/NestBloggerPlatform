@@ -5,17 +5,21 @@ import {
   ApiOperation,
   ApiParam,
 } from '@nestjs/swagger';
-import { UserViewDto } from '../../dto/view-dto/user.view-dto';
+import { CommentViewDto } from '../dto/view-dto/comments.view-dto';
 
-export const GetUserApi = () => {
+export const GetCommentApi = () => {
   return applyDecorators(
     ApiOperation({
-      summary: 'Returns user by id',
+      summary: 'Returns comment by id',
     }),
-    ApiParam({ name: 'id', type: String, description: 'User id' }),
+    ApiParam({
+      name: 'id',
+      type: String,
+      description: 'Id of existing comment',
+    }),
     ApiOkResponse({
-      type: UserViewDto,
       description: 'Success',
+      type: CommentViewDto,
     }),
     ApiNotFoundResponse({
       description: 'Not Found',
