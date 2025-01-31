@@ -8,16 +8,28 @@ export enum DeletionStatus {
   PermanentDeleted = 'permanent-deleted',
 }
 
-const pattern =
-  '^https://([a-zA-Z0-9_-]+\\.)+[a-zA-Z0-9_-]+(\\/[a-zA-Z0-9_-]+)*\\/?$';
+export const websiteUrlConstraints = {
+  maxLength: 100,
+  match: /^https:\/\/([a-zA-Z0-9_-]+\.)+[a-zA-Z0-9_-]+(\/[a-zA-Z0-9_-]+)*\/?$/,
+};
 
-// The timestamp flag automatically adds the updatedAt and createdAt fields
+export const nameConstraints = {
+  maxLength: 15,
+};
+
+export const descriptionConstraints = {
+  maxLength: 500,
+};
+
+export // The timestamp flag automatically adds the updatedAt and createdAt fields
+
+
 @Schema({ timestamps: true })
-export class Blog {
-  @Prop({ type: String, maxlength: 15, required: true })
+class Blog {
+  @Prop({ type: String, required: true, ...nameConstraints })
   name: string;
 
-  @Prop({ type: String, maxlength: 500, required: true })
+  @Prop({ type: String, required: true, ...descriptionConstraints })
   description: string;
 
   @Prop({ type: Boolean, default: false })
@@ -25,16 +37,8 @@ export class Blog {
 
   @Prop({
     type: String,
-    maxlength: 100,
     required: true,
-    validate: {
-      validator: function (v) {
-        return /^https:\/\/([a-zA-Z0-9_-]+\.)+[a-zA-Z0-9_-]+(\/[a-zA-Z0-9_-]+)*\/?$/.test(
-          v,
-        );
-      },
-      message: () => `WebsiteUrl should match the specified ${pattern} pattern`,
-    },
+    ...websiteUrlConstraints,
   })
   websiteUrl: string;
 
@@ -65,9 +69,6 @@ export class Blog {
     this.websiteUrl = dto.websiteUrl;
   }
 }
-
-
-
 
 export const BlogSchema = SchemaFactory.createForClass(Blog);
 

@@ -30,8 +30,8 @@ export const RegistrationConfirmationApi = () => {
       description: 'Email was verified. Account was activated',
     }),
     ApiBadRequestResponse({
-      description: 'If the inputModel has incorrect values',
       type: SwaggerErrorsMessagesViewDto,
+      description: 'If the inputModel has incorrect values',
     }),
     ApiTooManyRequestsResponse({
       description: 'More than 5 attempts from one IP-address during 10 seconds',

@@ -9,11 +9,12 @@ import {
 } from '@nestjs/swagger';
 import { SwaggerErrorsMessagesViewDto } from '../../../../../core/dto/swagger-errors-messages.view-dto';
 import { PasswordRecoveryInputDto } from '../../dto/input-dto/password-recovery.input-dto';
+import { emailConstraints } from '../../../domain/user.entity';
 
 class SwaggerPasswordRecoveryInputDto implements PasswordRecoveryInputDto {
   @ApiProperty({
     type: String,
-    pattern: '^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
+    pattern: emailConstraints.match.source,
     example: 'example@example.com',
     description: 'Email of registered user',
   })
@@ -32,9 +33,9 @@ export const PasswordRecoveryApi = () => {
         "Even if current email is not registered (for prevent user's email detection)",
     }),
     ApiBadRequestResponse({
+      type: SwaggerErrorsMessagesViewDto,
       description:
         'If the inputModel has invalid email (for example 222^gmail.com)',
-      type: SwaggerErrorsMessagesViewDto,
     }),
     ApiTooManyRequestsResponse({
       description: 'More than 5 attempts from one IP-address during 10 seconds',

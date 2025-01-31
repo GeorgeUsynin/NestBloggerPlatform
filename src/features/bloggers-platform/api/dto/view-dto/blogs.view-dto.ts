@@ -1,12 +1,24 @@
 import { SchemaTimestampsConfig } from 'mongoose';
 import { BlogDocument } from '../../../domain/blog.entity';
+import { ApiProperty } from '@nestjs/swagger';
 
 export class BlogViewDto {
+  @ApiProperty({ type: String })
   id: string;
+
+  @ApiProperty({ type: String })
   description: string;
+
+  @ApiProperty({ type: String })
   name: string;
+
+  @ApiProperty({ type: String })
   websiteUrl: string;
+
+  @ApiProperty({ type: Date })
   createdAt: SchemaTimestampsConfig['createdAt'];
+
+  @ApiProperty({ type: Boolean })
   isMembership: boolean;
 
   static mapToView(blog: BlogDocument): BlogViewDto {

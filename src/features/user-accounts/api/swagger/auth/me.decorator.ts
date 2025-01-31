@@ -22,8 +22,8 @@ export const MeApi = () => {
   return applyDecorators(
     ApiOperation({ summary: 'Get information about current user' }),
     ApiOkResponse({
-      description: 'Success',
       type: SwaggerMeViewDto,
+      description: 'Success',
     }),
     ApiUnauthorizedResponse({
       description: 'Unauthorized',

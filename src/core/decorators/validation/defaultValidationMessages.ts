@@ -15,4 +15,6 @@ export const defaultValidationMessages = {
     `${validationArguments.property} length should be from ${min} to ${max} characters`,
   matches: (validationArguments: ValidationArguments, pattern: RegExp) =>
     `${validationArguments.property} should match the specified ${pattern} pattern`,
+  maxLength: (validationArguments: ValidationArguments, max: number) =>
+    `${validationArguments.property} max length should be ${max} characters`,
 };

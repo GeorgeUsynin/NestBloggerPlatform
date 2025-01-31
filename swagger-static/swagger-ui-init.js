@@ -472,7 +472,7 @@ window.onload = function() {
               "basic": []
             }
           ],
-          "summary": "Returns all users",
+          "summary": "Returns users with paging",
           "tags": [
             "Users"
           ]
@@ -493,7 +493,14 @@ window.onload = function() {
           },
           "responses": {
             "201": {
-              "description": "Returns the newly created user"
+              "description": "Returns the newly created user",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/UserViewDto"
+                  }
+                }
+              }
             },
             "400": {
               "description": "If the inputModel has incorrect values <br/> <br/> <i>Note: If the error should be in the BLL, for example, \"the email address is not unique\", do not try to mix this error with input validation errors in the middleware, just return one element in the errors array</i>",
@@ -564,13 +571,19 @@ window.onload = function() {
               "required": false,
               "in": "query",
               "schema": {
-                "$ref": "#/components/schemas/Object"
+                "default": "createdAt",
+                "type": "string",
+                "enum": [
+                  "createdAt",
+                  "name"
+                ]
               }
             },
             {
               "name": "searchNameTerm",
-              "required": true,
+              "required": false,
               "in": "query",
+              "description": "Search term for blog Name: Name should contains this term in any position",
               "schema": {
                 "nullable": true,
                 "default": null,
@@ -580,9 +593,31 @@ window.onload = function() {
           ],
           "responses": {
             "200": {
-              "description": ""
+              "description": "Success",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "allOf": [
+                      {
+                        "$ref": "#/components/schemas/PaginatedViewDto"
+                      },
+                      {
+                        "properties": {
+                          "items": {
+                            "type": "array",
+                            "items": {
+                              "$ref": "#/components/schemas/BlogViewDto"
+                            }
+                          }
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
             }
           },
+          "summary": "Returns blogs with paging",
           "tags": [
             "Blogs"
           ]
@@ -591,18 +626,19 @@ window.onload = function() {
           "operationId": "BlogsController_createBlog",
           "parameters": [],
           "requestBody": {
-            "required": true,
+            "required": false,
+            "description": "Data for constructing new Blog entity",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/CreateBlogInputDto"
+                  "$ref": "#/components/schemas/SwaggerCreateBlogInputDto"
                 }
               }
             }
           },
           "responses": {
             "201": {
-              "description": "",
+              "description": "Returns the newly created blog",
               "content": {
                 "application/json": {
                   "schema": {
@@ -610,8 +646,22 @@ window.onload = function() {
                   }
                 }
               }
+            },
+            "400": {
+              "description": "If the inputModel has incorrect values",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/SwaggerErrorsMessagesViewDto"
+                  }
+                }
+              }
+            },
+            "401": {
+              "description": "Unauthorized"
             }
           },
+          "summary": "Create new blog",
           "tags": [
             "Blogs"
           ]
@@ -632,7 +682,7 @@ window.onload = function() {
           ],
           "responses": {
             "200": {
-              "description": "",
+              "description": "Success",
               "content": {
                 "application/json": {
                   "schema": {
@@ -640,8 +690,12 @@ window.onload = function() {
                   }
                 }
               }
+            },
+            "404": {
+              "description": "Not Found"
             }
           },
+          "summary": "Returns blog by id",
           "tags": [
             "Blogs"
           ]
@@ -659,20 +713,38 @@ window.onload = function() {
             }
           ],
           "requestBody": {
-            "required": true,
+            "required": false,
+            "description": "Data for updating",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/UpdateBlogInputDto"
+                  "$ref": "#/components/schemas/SwaggerUpdateBlogInputDto"
                 }
               }
             }
           },
           "responses": {
             "204": {
-              "description": ""
+              "description": "No Content"
+            },
+            "400": {
+              "description": "If the inputModel has incorrect values",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/SwaggerErrorsMessagesViewDto"
+                  }
+                }
+              }
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "404": {
+              "description": "Not Found"
             }
           },
+          "summary": "Update existing Blog by id with InputModel",
           "tags": [
             "Blogs"
           ]
@@ -691,15 +763,22 @@ window.onload = function() {
           ],
           "responses": {
             "204": {
-              "description": ""
+              "description": "No Content"
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "404": {
+              "description": "Not Found"
             }
           },
+          "summary": "Delete blog specified by id",
           "tags": [
             "Blogs"
           ]
         }
       },
-      "/blogs/{id}/posts": {
+      "/blogs/{blogId}/posts": {
         "get": {
           "operationId": "BlogsController_getAllPostsByBlogId",
           "parameters": [
@@ -743,11 +822,16 @@ window.onload = function() {
               "required": false,
               "in": "query",
               "schema": {
-                "$ref": "#/components/schemas/Object"
+                "type": "string",
+                "enum": [
+                  "createdAt",
+                  "title",
+                  "blogName"
+                ]
               }
             },
             {
-              "name": "id",
+              "name": "blogId",
               "required": true,
               "in": "path",
               "schema": {
@@ -757,13 +841,40 @@ window.onload = function() {
           ],
           "responses": {
             "200": {
-              "description": ""
+              "description": "Success",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "allOf": [
+                      {
+                        "$ref": "#/components/schemas/PaginatedViewDto"
+                      },
+                      {
+                        "properties": {
+                          "items": {
+                            "type": "array",
+                            "items": {
+                              "$ref": "#/components/schemas/PostViewDto"
+                            }
+                          }
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
+            },
+            "404": {
+              "description": "If specified blog is not exists"
             }
           },
+          "summary": "Returns all posts for specified blog",
           "tags": [
             "Blogs"
           ]
-        },
+        }
+      },
+      "/blogs/{id}/posts": {
         "post": {
           "operationId": "BlogsController_createPostByBlogID",
           "parameters": [
@@ -776,9 +887,20 @@ window.onload = function() {
               }
             }
           ],
+          "requestBody": {
+            "required": false,
+            "description": "Data for constructing new Post entity",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OmitTypeClass"
+                }
+              }
+            }
+          },
           "responses": {
             "201": {
-              "description": "",
+              "description": "Returns the newly created blog",
               "content": {
                 "application/json": {
                   "schema": {
@@ -786,8 +908,25 @@ window.onload = function() {
                   }
                 }
               }
+            },
+            "400": {
+              "description": "If the inputModel has incorrect values",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/SwaggerErrorsMessagesViewDto"
+                  }
+                }
+              }
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "404": {
+              "description": "If specified blog doesn't exists"
             }
           },
+          "summary": "Create new post for specific blog",
           "tags": [
             "Blogs"
           ]
@@ -837,7 +976,12 @@ window.onload = function() {
               "required": false,
               "in": "query",
               "schema": {
-                "$ref": "#/components/schemas/Object"
+                "type": "string",
+                "enum": [
+                  "createdAt",
+                  "title",
+                  "blogName"
+                ]
               }
             }
           ],
@@ -1186,7 +1330,7 @@ window.onload = function() {
             },
             "email": {
               "type": "string",
-              "pattern": "^[w-.]+@([w-]+.)+[w-]{2,4}$",
+              "pattern": "^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$",
               "example": "example@example.com",
               "description": "must be unique"
             }
@@ -1214,7 +1358,7 @@ window.onload = function() {
           "properties": {
             "email": {
               "type": "string",
-              "pattern": "^[w-.]+@([w-]+.)+[w-]{2,4}$",
+              "pattern": "^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$",
               "example": "example@example.com",
               "description": "Email of already registered but not confirmed user"
             }
@@ -1228,7 +1372,7 @@ window.onload = function() {
           "properties": {
             "email": {
               "type": "string",
-              "pattern": "^[w-.]+@([w-]+.)+[w-]{2,4}$",
+              "pattern": "^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$",
               "example": "example@example.com",
               "description": "Email of registered user"
             }
@@ -1284,20 +1428,16 @@ window.onload = function() {
           "type": "object",
           "properties": {
             "totalCount": {
-              "type": "number",
-              "default": 0
+              "type": "number"
             },
             "pagesCount": {
-              "type": "number",
-              "default": 0
+              "type": "number"
             },
             "page": {
-              "type": "number",
-              "default": 0
+              "type": "number"
             },
             "pageSize": {
-              "type": "number",
-              "default": 0
+              "type": "number"
             },
             "items": {
               "type": "object"
@@ -1310,10 +1450,6 @@ window.onload = function() {
             "pageSize",
             "items"
           ]
-        },
-        "Object": {
-          "type": "object",
-          "properties": {}
         },
         "BlogViewDto": {
           "type": "object",
@@ -1331,7 +1467,8 @@ window.onload = function() {
               "type": "string"
             },
             "createdAt": {
-              "type": "object"
+              "format": "date-time",
+              "type": "string"
             },
             "isMembership": {
               "type": "boolean"
@@ -1346,23 +1483,54 @@ window.onload = function() {
             "isMembership"
           ]
         },
-        "CreateBlogInputDto": {
+        "NewestLikesDto": {
           "type": "object",
           "properties": {
-            "description": {
+            "addedAt": {
               "type": "string"
             },
-            "name": {
+            "userId": {
               "type": "string"
             },
-            "websiteUrl": {
+            "login": {
               "type": "string"
             }
           },
           "required": [
-            "description",
-            "name",
-            "websiteUrl"
+            "addedAt",
+            "userId",
+            "login"
+          ]
+        },
+        "ExtendedLikesInfoDto": {
+          "type": "object",
+          "properties": {
+            "likesCount": {
+              "type": "number"
+            },
+            "dislikesCount": {
+              "type": "number"
+            },
+            "myStatus": {
+              "enum": [
+                "None",
+                "Like",
+                "Dislike"
+              ],
+              "type": "string"
+            },
+            "newestLikes": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/NewestLikesDto"
+              }
+            }
+          },
+          "required": [
+            "likesCount",
+            "dislikesCount",
+            "myStatus",
+            "newestLikes"
           ]
         },
         "PostViewDto": {
@@ -1387,38 +1555,11 @@ window.onload = function() {
               "type": "string"
             },
             "createdAt": {
-              "type": "object"
+              "format": "date-time",
+              "type": "string"
             },
             "extendedLikesInfo": {
-              "type": "object",
-              "properties": {
-                "likesCount": {
-                  "type": "number"
-                },
-                "dislikesCount": {
-                  "type": "number"
-                },
-                "myStatus": {
-                  "enum": [
-                    "None",
-                    "Like",
-                    "Dislike"
-                  ],
-                  "type": "string"
-                },
-                "newestLikes": {
-                  "type": "array",
-                  "items": {
-                    "type": "object"
-                  }
-                }
-              },
-              "required": [
-                "likesCount",
-                "dislikesCount",
-                "myStatus",
-                "newestLikes"
-              ]
+              "$ref": "#/components/schemas/ExtendedLikesInfoDto"
             }
           },
           "required": [
@@ -1432,46 +1573,99 @@ window.onload = function() {
             "extendedLikesInfo"
           ]
         },
-        "UpdateBlogInputDto": {
+        "SwaggerCreateBlogInputDto": {
           "type": "object",
           "properties": {
-            "description": {
-              "type": "string"
-            },
             "name": {
-              "type": "string"
+              "type": "string",
+              "maxLength": 15
+            },
+            "description": {
+              "type": "string",
+              "maxLength": 500
             },
             "websiteUrl": {
-              "type": "string"
+              "type": "string",
+              "maxLength": 100,
+              "pattern": "^https:\\/\\/([a-zA-Z0-9_-]+\\.)+[a-zA-Z0-9_-]+(\\/[a-zA-Z0-9_-]+)*\\/?$"
             }
           },
           "required": [
-            "description",
             "name",
+            "description",
             "websiteUrl"
           ]
+        },
+        "OmitTypeClass": {
+          "type": "object",
+          "properties": {
+            "title": {
+              "type": "string",
+              "maxLength": 30
+            },
+            "shortDescription": {
+              "type": "string",
+              "maxLength": 100
+            },
+            "content": {
+              "type": "string",
+              "maxLength": 1000
+            }
+          },
+          "required": [
+            "title",
+            "shortDescription",
+            "content"
+          ]
+        },
+        "SwaggerUpdateBlogInputDto": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string",
+              "maxLength": 15
+            },
+            "description": {
+              "type": "string",
+              "maxLength": 500
+            },
+            "websiteUrl": {
+              "type": "string",
+              "maxLength": 100,
+              "pattern": "^https:\\/\\/([a-zA-Z0-9_-]+\\.)+[a-zA-Z0-9_-]+(\\/[a-zA-Z0-9_-]+)*\\/?$"
+            }
+          },
+          "required": [
+            "name",
+            "description",
+            "websiteUrl"
+          ]
+        },
+        "Object": {
+          "type": "object",
+          "properties": {}
         },
         "CreatePostInputDto": {
           "type": "object",
           "properties": {
-            "blogId": {
-              "type": "string"
-            },
-            "content": {
+            "title": {
               "type": "string"
             },
             "shortDescription": {
               "type": "string"
             },
-            "title": {
+            "content": {
+              "type": "string"
+            },
+            "blogId": {
               "type": "string"
             }
           },
           "required": [
-            "blogId",
-            "content",
+            "title",
             "shortDescription",
-            "title"
+            "content",
+            "blogId"
           ]
         },
         "UpdatePostInputDto": {

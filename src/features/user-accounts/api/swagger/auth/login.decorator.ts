@@ -28,13 +28,13 @@ export const LoginApi = () => {
     ApiOperation({ summary: 'Try login user to the system' }),
     ApiBody({ type: SwaggerLoginInputDto, required: false }),
     ApiOkResponse({
+      type: SwaggerLoginSuccessViewDto,
       description:
         'Returns JWT accessToken (expired after 10 minutes) in body.',
-      type: SwaggerLoginSuccessViewDto,
     }),
     ApiBadRequestResponse({
-      description: 'If the inputModel has incorrect values',
       type: SwaggerErrorsMessagesViewDto,
+      description: 'If the inputModel has incorrect values',
     }),
     ApiUnauthorizedResponse({
       description: 'If the password or login or email is wrong',

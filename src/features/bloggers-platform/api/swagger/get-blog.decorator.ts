@@ -4,16 +4,16 @@ import {
   ApiOkResponse,
   ApiOperation,
 } from '@nestjs/swagger';
-import { UserViewDto } from '../../dto/view-dto/user.view-dto';
+import { BlogViewDto } from '../dto/view-dto/blogs.view-dto';
 
-export const GetUserApi = () => {
+export const GetBlogApi = () => {
   return applyDecorators(
     ApiOperation({
-      summary: 'Returns user by id',
+      summary: 'Returns blog by id',
     }),
     ApiOkResponse({
-      type: UserViewDto,
       description: 'Success',
+      type: BlogViewDto,
     }),
     ApiNotFoundResponse({
       description: 'Not Found',

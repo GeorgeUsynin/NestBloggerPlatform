@@ -5,7 +5,7 @@ import { ApiPaginatedResponse } from '../../../../../core/decorators/swagger/Api
 
 export const GetAllUsersApi = () => {
   return applyDecorators(
-    ApiOperation({ summary: 'Returns all users' }),
+    ApiOperation({ summary: 'Returns users with paging' }),
     ApiPaginatedResponse(UserViewDto),
     ApiUnauthorizedResponse({
       description: 'Unauthorized',

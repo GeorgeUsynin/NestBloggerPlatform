@@ -2,16 +2,16 @@ import { ApiProperty } from '@nestjs/swagger';
 
 // Base class for view models for queries for a list with pagination
 export abstract class PaginatedViewDto<T> {
-  @ApiProperty({ type: Number, default: 0 })
+  @ApiProperty({ type: Number })
   totalCount: number;
 
-  @ApiProperty({ type: Number, default: 0 })
+  @ApiProperty({ type: Number })
   pagesCount: number;
 
-  @ApiProperty({ type: Number, default: 0 })
+  @ApiProperty({ type: Number })
   page: number;
 
-  @ApiProperty({ type: Number, default: 0 })
+  @ApiProperty({ type: Number })
   pageSize: number;
 
   @ApiProperty()

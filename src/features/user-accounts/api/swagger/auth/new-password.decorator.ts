@@ -9,12 +9,13 @@ import {
 } from '@nestjs/swagger';
 import { SwaggerErrorsMessagesViewDto } from '../../../../../core/dto/swagger-errors-messages.view-dto';
 import { NewPasswordInputDto } from '../../dto/input-dto/new-password.input-dto';
+import { passwordConstraints } from '../../../domain/user.entity';
 
 class SwaggerNewPasswordInputDto implements NewPasswordInputDto {
   @ApiProperty({
     type: String,
-    maxLength: 20,
-    minLength: 6,
+    maxLength: passwordConstraints.maxLength,
+    minLength: passwordConstraints.minLength,
     description: 'New password',
   })
   newPassword: string;
@@ -36,9 +37,9 @@ export const NewPasswordApi = () => {
       description: 'If code is valid and new password is accepted',
     }),
     ApiBadRequestResponse({
+      type: SwaggerErrorsMessagesViewDto,
       description:
         'If the inputModel has incorrect value (for incorrect password length) or RecoveryCode is incorrect or expired',
-      type: SwaggerErrorsMessagesViewDto,
     }),
     ApiTooManyRequestsResponse({
       description: 'More than 5 attempts from one IP-address during 10 seconds',

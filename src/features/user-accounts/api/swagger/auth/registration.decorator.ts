@@ -9,27 +9,32 @@ import {
 } from '@nestjs/swagger';
 import { SwaggerErrorsMessagesViewDto } from '../../../../../core/dto/swagger-errors-messages.view-dto';
 import { CreateUserInputDto } from '../../dto/input-dto/create/users.input-dto';
+import {
+  emailConstraints,
+  loginConstraints,
+  passwordConstraints,
+} from '../../../domain/user.entity';
 
 export class SwaggerCreateUserInputDto implements CreateUserInputDto {
   @ApiProperty({
     type: String,
-    maxLength: 10,
-    minLength: 3,
-    pattern: '^[a-zA-Z0-9_-]*$',
+    maxLength: loginConstraints.maxLength,
+    minLength: loginConstraints.minLength,
+    pattern: loginConstraints.match.source,
     description: 'must be unique',
   })
   login: string;
 
   @ApiProperty({
     type: String,
-    maxLength: 20,
-    minLength: 6,
+    maxLength: passwordConstraints.maxLength,
+    minLength: passwordConstraints.minLength,
   })
   password: string;
 
   @ApiProperty({
     type: String,
-    pattern: '^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
+    pattern: emailConstraints.match.source,
     example: 'example@example.com',
     description: 'must be unique',
   })
@@ -48,8 +53,8 @@ export const RegistrationApi = () => {
         'Input data is accepted. Email with confirmation code will be send to passed email address',
     }),
     ApiBadRequestResponse({
-      description: 'If the inputModel has incorrect values',
       type: SwaggerErrorsMessagesViewDto,
+      description: 'If the inputModel has incorrect values',
     }),
     ApiTooManyRequestsResponse({
       description: 'More than 5 attempts from one IP-address during 10 seconds',

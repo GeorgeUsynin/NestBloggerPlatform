@@ -8,16 +8,32 @@ export enum DeletionStatus {
   PermanentDeleted = 'permanent-deleted',
 }
 
+export const titleConstraints = {
+  maxLength: 30,
+};
+
+export const shortDescriptionConstraints = {
+  maxLength: 100,
+};
+
+export const contentConstraints = {
+  maxLength: 1000,
+};
+
 // The timestamp flag automatically adds the updatedAt and createdAt fields
 @Schema({ timestamps: true })
 export class Post {
-  @Prop({ type: String, maxlength: 30, required: true })
+  @Prop({ type: String, required: true, ...titleConstraints })
   title: string;
 
-  @Prop({ type: String, maxlength: 100, required: true })
+  @Prop({ type: String, required: true, ...shortDescriptionConstraints })
   shortDescription: string;
 
-  @Prop({ type: String, maxlength: 1000, required: true })
+  @Prop({
+    type: String,
+    required: true,
+    ...contentConstraints,
+  })
   content: string;
 
   @Prop({ type: String, required: true })

@@ -1,32 +1,66 @@
 import { SchemaTimestampsConfig } from 'mongoose';
 import { PostDocument } from '../../../domain/post.entity';
 import { LikeStatus } from '../../../types';
+import { ApiProperty } from '@nestjs/swagger';
 
-type NewestLikes = {
+class NewestLikesDto {
+  @ApiProperty({ type: String })
   addedAt: string;
+
+  @ApiProperty({ type: String })
   userId: string;
+
+  @ApiProperty({ type: String })
   login: string;
-};
+}
+
+class ExtendedLikesInfoDto {
+  @ApiProperty({ type: Number })
+  likesCount: number;
+
+  @ApiProperty({ type: Number })
+  dislikesCount: number;
+
+  @ApiProperty({
+    enum: LikeStatus,
+  })
+  myStatus: LikeStatus;
+
+  @ApiProperty({
+    type: [NewestLikesDto],
+  })
+  newestLikes: NewestLikesDto[];
+}
 
 export class PostViewDto {
+  @ApiProperty({ type: String })
   id: string;
+
+  @ApiProperty({ type: String })
   title: string;
+
+  @ApiProperty({ type: String })
   shortDescription: string;
+
+  @ApiProperty({ type: String })
   content: string;
+
+  @ApiProperty({ type: String })
   blogId: string;
+
+  @ApiProperty({ type: String })
   blogName: string;
+
+  @ApiProperty({ type: Date })
   createdAt: SchemaTimestampsConfig['createdAt'];
-  extendedLikesInfo: {
-    likesCount: number;
-    dislikesCount: number;
-    myStatus: LikeStatus;
-    newestLikes: NewestLikes[];
-  };
+
+  @ApiProperty({ type: ExtendedLikesInfoDto })
+  extendedLikesInfo: ExtendedLikesInfoDto;
 
   static mapToView(
     post: PostDocument,
     myStatus: LikeStatus,
-    newestLikes: NewestLikes[],
+    newestLikes: NewestLikesDto[],
   ): PostViewDto {
     const dto = new PostViewDto();
 
