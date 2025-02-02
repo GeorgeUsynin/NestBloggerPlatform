@@ -11,41 +11,45 @@ import {
 } from '@nestjs/swagger';
 import { SwaggerErrorsMessagesViewDto } from '../../../../core/dto/swagger-errors-messages.view-dto';
 import {
-  descriptionConstraints,
-  nameConstraints,
-  websiteUrlConstraints,
-} from '../../domain/blog.entity';
-import { UpdateBlogInputDto } from '../dto/input-dto/update/blogs.input-dto';
+  contentConstraints,
+  shortDescriptionConstraints,
+  titleConstraints,
+} from '../../domain/post.entity';
+import { UpdatePostInputDto } from '../dto/input-dto/update/posts.input-dto';
 
-export class SwaggerUpdateBlogInputDto implements UpdateBlogInputDto {
+export class SwaggerUpdatePostInputDto implements UpdatePostInputDto {
   @ApiProperty({
     type: String,
-    maxLength: nameConstraints.maxLength,
+    maxLength: titleConstraints.maxLength,
   })
-  name: string;
-
-  @ApiProperty({
-    type: String,
-    maxLength: descriptionConstraints.maxLength,
-  })
-  description: string;
+  title: string;
 
   @ApiProperty({
     type: String,
-    maxLength: websiteUrlConstraints.maxLength,
-    pattern: websiteUrlConstraints.match.source,
+    maxLength: shortDescriptionConstraints.maxLength,
   })
-  websiteUrl: string;
+  shortDescription: string;
+
+  @ApiProperty({
+    type: String,
+    maxLength: contentConstraints.maxLength,
+  })
+  content: string;
+
+  @ApiProperty({
+    type: String,
+  })
+  blogId: string;
 }
 
-export const UpdateBlogApi = () => {
+export const UpdatePostApi = () => {
   return applyDecorators(
     ApiOperation({
-      summary: 'Update existing Blog by id with InputModel',
+      summary: 'Update existing post by id with InputModel',
     }),
-    ApiParam({ name: 'id', type: String, description: 'Blog id' }),
+    ApiParam({ name: 'id', type: String, description: 'Post id' }),
     ApiBody({
-      type: SwaggerUpdateBlogInputDto,
+      type: SwaggerUpdatePostInputDto,
       description: 'Data for updating',
       required: false,
     }),

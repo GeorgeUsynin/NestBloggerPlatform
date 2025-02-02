@@ -298,6 +298,7 @@ window.onload = function() {
               "name": "id",
               "required": true,
               "in": "path",
+              "description": "User id",
               "schema": {
                 "type": "string"
               }
@@ -335,6 +336,7 @@ window.onload = function() {
               "name": "id",
               "required": true,
               "in": "path",
+              "description": "User id",
               "schema": {
                 "type": "string"
               }
@@ -675,6 +677,7 @@ window.onload = function() {
               "name": "id",
               "required": true,
               "in": "path",
+              "description": "Existing blog id",
               "schema": {
                 "type": "string"
               }
@@ -707,6 +710,7 @@ window.onload = function() {
               "name": "id",
               "required": true,
               "in": "path",
+              "description": "Blog id",
               "schema": {
                 "type": "string"
               }
@@ -756,6 +760,7 @@ window.onload = function() {
               "name": "id",
               "required": true,
               "in": "path",
+              "description": "Blog id",
               "schema": {
                 "type": "string"
               }
@@ -834,6 +839,7 @@ window.onload = function() {
               "name": "blogId",
               "required": true,
               "in": "path",
+              "description": "Blog id",
               "schema": {
                 "type": "string"
               }
@@ -872,16 +878,15 @@ window.onload = function() {
           "tags": [
             "Blogs"
           ]
-        }
-      },
-      "/blogs/{id}/posts": {
+        },
         "post": {
           "operationId": "BlogsController_createPostByBlogID",
           "parameters": [
             {
-              "name": "id",
+              "name": "blogId",
               "required": true,
               "in": "path",
+              "description": "Blog id",
               "schema": {
                 "type": "string"
               }
@@ -987,9 +992,31 @@ window.onload = function() {
           ],
           "responses": {
             "200": {
-              "description": ""
+              "description": "Success",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "allOf": [
+                      {
+                        "$ref": "#/components/schemas/PaginatedViewDto"
+                      },
+                      {
+                        "properties": {
+                          "items": {
+                            "type": "array",
+                            "items": {
+                              "$ref": "#/components/schemas/PostViewDto"
+                            }
+                          }
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
             }
           },
+          "summary": "Returns posts with paging",
           "tags": [
             "Posts"
           ]
@@ -998,18 +1025,19 @@ window.onload = function() {
           "operationId": "PostsController_createPost",
           "parameters": [],
           "requestBody": {
-            "required": true,
+            "required": false,
+            "description": "Data for constructing new Blog entity",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/CreatePostInputDto"
+                  "$ref": "#/components/schemas/SwaggerCreatePostInputDto"
                 }
               }
             }
           },
           "responses": {
             "201": {
-              "description": "",
+              "description": "Returns the newly created post",
               "content": {
                 "application/json": {
                   "schema": {
@@ -1017,8 +1045,22 @@ window.onload = function() {
                   }
                 }
               }
+            },
+            "400": {
+              "description": "If the inputModel has incorrect values",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/SwaggerErrorsMessagesViewDto"
+                  }
+                }
+              }
+            },
+            "401": {
+              "description": "Unauthorized"
             }
           },
+          "summary": "Create new post",
           "tags": [
             "Posts"
           ]
@@ -1032,6 +1074,7 @@ window.onload = function() {
               "name": "id",
               "required": true,
               "in": "path",
+              "description": "Id of existing post",
               "schema": {
                 "type": "string"
               }
@@ -1039,7 +1082,7 @@ window.onload = function() {
           ],
           "responses": {
             "200": {
-              "description": "",
+              "description": "Success",
               "content": {
                 "application/json": {
                   "schema": {
@@ -1047,8 +1090,12 @@ window.onload = function() {
                   }
                 }
               }
+            },
+            "404": {
+              "description": "Not Found"
             }
           },
+          "summary": "Returns post by id",
           "tags": [
             "Posts"
           ]
@@ -1060,26 +1107,45 @@ window.onload = function() {
               "name": "id",
               "required": true,
               "in": "path",
+              "description": "Post id",
               "schema": {
                 "type": "string"
               }
             }
           ],
           "requestBody": {
-            "required": true,
+            "required": false,
+            "description": "Data for updating",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/UpdatePostInputDto"
+                  "$ref": "#/components/schemas/SwaggerUpdatePostInputDto"
                 }
               }
             }
           },
           "responses": {
             "204": {
-              "description": ""
+              "description": "No Content"
+            },
+            "400": {
+              "description": "If the inputModel has incorrect values",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/SwaggerErrorsMessagesViewDto"
+                  }
+                }
+              }
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "404": {
+              "description": "Not Found"
             }
           },
+          "summary": "Update existing post by id with InputModel",
           "tags": [
             "Posts"
           ]
@@ -1091,6 +1157,7 @@ window.onload = function() {
               "name": "id",
               "required": true,
               "in": "path",
+              "description": "Post id",
               "schema": {
                 "type": "string"
               }
@@ -1098,15 +1165,22 @@ window.onload = function() {
           ],
           "responses": {
             "204": {
-              "description": ""
+              "description": "No Content"
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "404": {
+              "description": "Not Found"
             }
           },
+          "summary": "Delete post specified by id",
           "tags": [
             "Posts"
           ]
         }
       },
-      "/posts/{id}/comments": {
+      "/posts/{postId}/comments": {
         "get": {
           "operationId": "PostsController_getAllCommentsByPostId",
           "parameters": [
@@ -1150,13 +1224,18 @@ window.onload = function() {
               "required": false,
               "in": "query",
               "schema": {
-                "$ref": "#/components/schemas/Object"
+                "default": "createdAt",
+                "type": "string",
+                "enum": [
+                  "createdAt"
+                ]
               }
             },
             {
-              "name": "id",
+              "name": "postId",
               "required": true,
               "in": "path",
+              "description": "Post id",
               "schema": {
                 "type": "string"
               }
@@ -1164,9 +1243,34 @@ window.onload = function() {
           ],
           "responses": {
             "200": {
-              "description": ""
+              "description": "Success",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "allOf": [
+                      {
+                        "$ref": "#/components/schemas/PaginatedViewDto"
+                      },
+                      {
+                        "properties": {
+                          "items": {
+                            "type": "array",
+                            "items": {
+                              "$ref": "#/components/schemas/CommentViewDto"
+                            }
+                          }
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
+            },
+            "404": {
+              "description": "If post for passed postId doesn't exist"
             }
           },
+          "summary": "Returns comments for specified post",
           "tags": [
             "Posts"
           ]
@@ -1180,6 +1284,7 @@ window.onload = function() {
               "name": "id",
               "required": true,
               "in": "path",
+              "description": "Id of existing comment",
               "schema": {
                 "type": "string"
               }
@@ -1187,7 +1292,7 @@ window.onload = function() {
           ],
           "responses": {
             "200": {
-              "description": "",
+              "description": "Success",
               "content": {
                 "application/json": {
                   "schema": {
@@ -1195,8 +1300,12 @@ window.onload = function() {
                   }
                 }
               }
+            },
+            "404": {
+              "description": "Not Found"
             }
           },
+          "summary": "Returns comment by id",
           "tags": [
             "Comments"
           ]
@@ -1471,7 +1580,8 @@ window.onload = function() {
               "type": "string"
             },
             "isMembership": {
-              "type": "boolean"
+              "type": "boolean",
+              "description": "True if user has not expired membership subscription to blog"
             }
           },
           "required": [
@@ -1487,13 +1597,16 @@ window.onload = function() {
           "type": "object",
           "properties": {
             "addedAt": {
+              "format": "date-time",
               "type": "string"
             },
             "userId": {
-              "type": "string"
+              "type": "string",
+              "nullable": true
             },
             "login": {
-              "type": "string"
+              "type": "string",
+              "nullable": true
             }
           },
           "required": [
@@ -1506,10 +1619,12 @@ window.onload = function() {
           "type": "object",
           "properties": {
             "likesCount": {
-              "type": "number"
+              "type": "number",
+              "description": "Total likes for parent item"
             },
             "dislikesCount": {
-              "type": "number"
+              "type": "number",
+              "description": "Total dislikes for parent item"
             },
             "myStatus": {
               "enum": [
@@ -1517,9 +1632,12 @@ window.onload = function() {
                 "Like",
                 "Dislike"
               ],
-              "type": "string"
+              "type": "string",
+              "description": "Send None if you want to unlike/undislike"
             },
             "newestLikes": {
+              "description": "Last 3 likes",
+              "nullable": true,
               "type": "array",
               "items": {
                 "$ref": "#/components/schemas/NewestLikesDto"
@@ -1641,54 +1759,46 @@ window.onload = function() {
             "websiteUrl"
           ]
         },
-        "Object": {
-          "type": "object",
-          "properties": {}
-        },
-        "CreatePostInputDto": {
+        "CommentatorInfo": {
           "type": "object",
           "properties": {
-            "title": {
+            "userId": {
               "type": "string"
             },
-            "shortDescription": {
-              "type": "string"
-            },
-            "content": {
-              "type": "string"
-            },
-            "blogId": {
+            "userLogin": {
               "type": "string"
             }
           },
           "required": [
-            "title",
-            "shortDescription",
-            "content",
-            "blogId"
+            "userId",
+            "userLogin"
           ]
         },
-        "UpdatePostInputDto": {
+        "LikesInfo": {
           "type": "object",
           "properties": {
-            "blogId": {
-              "type": "string"
+            "likesCount": {
+              "type": "number",
+              "description": "Total likes for parent item"
             },
-            "content": {
-              "type": "string"
+            "dislikesCount": {
+              "type": "number",
+              "description": "Total dislikes for parent item"
             },
-            "shortDescription": {
-              "type": "string"
-            },
-            "title": {
-              "type": "string"
+            "myStatus": {
+              "enum": [
+                "None",
+                "Like",
+                "Dislike"
+              ],
+              "type": "string",
+              "description": "Send None if you want to unlike/undislike"
             }
           },
           "required": [
-            "blogId",
-            "content",
-            "shortDescription",
-            "title"
+            "likesCount",
+            "dislikesCount",
+            "myStatus"
           ]
         },
         "CommentViewDto": {
@@ -1701,46 +1811,14 @@ window.onload = function() {
               "type": "string"
             },
             "commentatorInfo": {
-              "type": "object",
-              "properties": {
-                "userId": {
-                  "type": "string"
-                },
-                "userLogin": {
-                  "type": "string"
-                }
-              },
-              "required": [
-                "userId",
-                "userLogin"
-              ]
+              "$ref": "#/components/schemas/CommentatorInfo"
             },
             "createdAt": {
-              "type": "object"
+              "format": "date-time",
+              "type": "string"
             },
             "likesInfo": {
-              "type": "object",
-              "properties": {
-                "likesCount": {
-                  "type": "number"
-                },
-                "dislikesCount": {
-                  "type": "number"
-                },
-                "myStatus": {
-                  "enum": [
-                    "None",
-                    "Like",
-                    "Dislike"
-                  ],
-                  "type": "string"
-                }
-              },
-              "required": [
-                "likesCount",
-                "dislikesCount",
-                "myStatus"
-              ]
+              "$ref": "#/components/schemas/LikesInfo"
             }
           },
           "required": [
@@ -1749,6 +1827,58 @@ window.onload = function() {
             "commentatorInfo",
             "createdAt",
             "likesInfo"
+          ]
+        },
+        "SwaggerCreatePostInputDto": {
+          "type": "object",
+          "properties": {
+            "title": {
+              "type": "string",
+              "maxLength": 30
+            },
+            "shortDescription": {
+              "type": "string",
+              "maxLength": 100
+            },
+            "content": {
+              "type": "string",
+              "maxLength": 1000
+            },
+            "blogId": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "title",
+            "shortDescription",
+            "content",
+            "blogId"
+          ]
+        },
+        "SwaggerUpdatePostInputDto": {
+          "type": "object",
+          "properties": {
+            "title": {
+              "type": "string",
+              "maxLength": 30
+            },
+            "shortDescription": {
+              "type": "string",
+              "maxLength": 100
+            },
+            "content": {
+              "type": "string",
+              "maxLength": 1000
+            },
+            "blogId": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "title",
+            "shortDescription",
+            "content",
+            "blogId"
           ]
         }
       }

@@ -3,6 +3,7 @@ import {
   ApiNoContentResponse,
   ApiNotFoundResponse,
   ApiOperation,
+  ApiParam,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 
@@ -11,6 +12,7 @@ export const DeleteBlogApi = () => {
     ApiOperation({
       summary: 'Delete blog specified by id',
     }),
+    ApiParam({ name: 'id', type: String, description: 'Blog id' }),
     ApiNoContentResponse({
       description: 'No Content',
     }),

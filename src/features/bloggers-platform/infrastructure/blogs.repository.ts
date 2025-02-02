@@ -19,6 +19,7 @@ export class BlogsRepository {
       _id: id,
       deletionStatus: { $ne: DeletionStatus.PermanentDeleted },
     });
+
     if (!blog) {
       //TODO: replace with domain exception
       throw new NotFoundException('Blog not found');

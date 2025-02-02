@@ -18,7 +18,10 @@ export class BlogViewDto {
   @ApiProperty({ type: Date })
   createdAt: SchemaTimestampsConfig['createdAt'];
 
-  @ApiProperty({ type: Boolean })
+  @ApiProperty({
+    type: Boolean,
+    description: 'True if user has not expired membership subscription to blog',
+  })
   isMembership: boolean;
 
   static mapToView(blog: BlogDocument): BlogViewDto {

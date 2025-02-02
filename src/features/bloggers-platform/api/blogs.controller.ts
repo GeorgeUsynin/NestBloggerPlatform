@@ -22,13 +22,15 @@ import { PostViewDto } from './dto/view-dto/posts.view-dto';
 import { PostsService } from '../application/posts.service';
 import { PostsQueryRepository } from '../infrastructure/posts.query-repository';
 import { GetPostsQueryParams } from './dto/query-params-dto/get-posts-query-params.input-dto copy';
-import { GetAllBlogsApi } from './swagger/get-all-blogs.decorator';
-import { GetBlogApi } from './swagger/get-blog.decorator';
-import { GetAllPostsApi } from './swagger/get-all-posts.decorator';
-import { CreateBlogApi } from './swagger/create-blog.decorator';
-import { CreatePostByBlogIdApi } from './swagger/create-post-by-blogId.decorator';
-import { UpdateBlogApi } from './swagger/update-blog.decorator';
-import { DeleteBlogApi } from './swagger/delete-blog.decorator';
+import {
+  GetAllBlogsApi,
+  GetBlogApi,
+  GetAllPostsByBlogIdApi,
+  CreateBlogApi,
+  CreatePostByBlogIdApi,
+  UpdateBlogApi,
+  DeleteBlogApi,
+} from './swagger';
 
 @Controller('blogs')
 export class BlogsController {
@@ -57,7 +59,7 @@ export class BlogsController {
 
   @Get(':blogId/posts')
   @HttpCode(HttpStatus.OK)
-  @GetAllPostsApi()
+  @GetAllPostsByBlogIdApi()
   async getAllPostsByBlogId(
     @Query() query: GetPostsQueryParams,
     @Param('blogId') blogId: string,
@@ -74,16 +76,16 @@ export class BlogsController {
     return this.blogsQueryRepository.getByIdOrNotFoundFail(blogId);
   }
 
-  @Post(':id/posts')
+  @Post(':blogId/posts')
   @HttpCode(HttpStatus.CREATED)
   @CreatePostByBlogIdApi()
   async createPostByBlogID(
-    @Param('id') id: string,
+    @Param('blogId') blogId: string,
     @Body() payload: Omit<CreatePostInputDto, 'blogId'>,
   ): Promise<PostViewDto> {
     const postId = await this.postsService.createPost({
       ...payload,
-      blogId: id,
+      blogId,
     });
 
     return this.postsQueryRepository.getByIdOrNotFoundFail(postId);

@@ -10,7 +10,7 @@ import {
   passwordConstraints,
 } from '../../../../domain/user.entity';
 
-export class CreateUserInputDto extends CreateUserDto {
+export class CreateUserInputDto implements CreateUserDto {
   // Call order: @IsStringWithTrim() -> @MatchesWithMessage() -> @LengthWithMessage()
   @MatchesWithMessage(loginConstraints.match)
   @LengthWithMessage(loginConstraints.minLength, loginConstraints.maxLength)

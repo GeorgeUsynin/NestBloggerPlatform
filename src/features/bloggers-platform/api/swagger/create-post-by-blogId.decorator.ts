@@ -5,6 +5,7 @@ import {
   ApiCreatedResponse,
   ApiNotFoundResponse,
   ApiOperation,
+  ApiParam,
   ApiUnauthorizedResponse,
   OmitType,
 } from '@nestjs/swagger';
@@ -17,6 +18,7 @@ export const CreatePostByBlogIdApi = () => {
     ApiOperation({
       summary: 'Create new post for specific blog',
     }),
+    ApiParam({ name: 'blogId', type: String, description: 'Blog id' }),
     ApiBody({
       type: OmitType(SwaggerCreatePostInputDto, ['blogId'] as const),
       description: 'Data for constructing new Post entity',

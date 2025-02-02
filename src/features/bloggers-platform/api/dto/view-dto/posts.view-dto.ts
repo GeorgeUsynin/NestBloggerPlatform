@@ -4,30 +4,33 @@ import { LikeStatus } from '../../../types';
 import { ApiProperty } from '@nestjs/swagger';
 
 class NewestLikesDto {
-  @ApiProperty({ type: String })
+  @ApiProperty({ type: Date })
   addedAt: string;
 
-  @ApiProperty({ type: String })
+  @ApiProperty({ type: String, nullable: true })
   userId: string;
 
-  @ApiProperty({ type: String })
+  @ApiProperty({ type: String, nullable: true })
   login: string;
 }
 
 class ExtendedLikesInfoDto {
-  @ApiProperty({ type: Number })
+  @ApiProperty({ type: Number, description: 'Total likes for parent item' })
   likesCount: number;
 
-  @ApiProperty({ type: Number })
+  @ApiProperty({ type: Number, description: 'Total dislikes for parent item' })
   dislikesCount: number;
 
   @ApiProperty({
     enum: LikeStatus,
+    description: 'Send None if you want to unlike\/undislike',
   })
   myStatus: LikeStatus;
 
   @ApiProperty({
     type: [NewestLikesDto],
+    description: 'Last 3 likes',
+    nullable: true,
   })
   newestLikes: NewestLikesDto[];
 }
