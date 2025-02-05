@@ -1,12 +1,16 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
+import { ConfigService } from '@nestjs/config';
+import { add } from 'date-fns/add';
 import { randomUUID } from 'node:crypto';
+import { CryptoService } from './crypto.service';
+import { ENV_VARIABLE_NAMES } from '../../../constants';
 import { CreateUserDto } from '../domain/dto/create/users.create-dto';
 import { UsersRepository } from '../infrastructure/users.repository';
 import { BadRequestDomainException } from '../../../core/exceptions/domain-exceptions';
-import { CryptoService } from './crypto.service';
 import { User, UserDocument, UserModelType } from '../domain/user.entity';
 import { EmailManager } from '../../notification/email.manager';
+import { UsersConfig } from '../users.config';
 
 @Injectable()
 export class RegistrationService {
@@ -15,6 +19,8 @@ export class RegistrationService {
     private cryptoService: CryptoService,
     private usersRepository: UsersRepository,
     private emailManager: EmailManager,
+    private configService: ConfigService,
+    private usersConfig: UsersConfig,
   ) {}
 
   async registerUser(payload: CreateUserDto): Promise<void> {
@@ -73,8 +79,11 @@ export class RegistrationService {
 
   private async sendEmailConfirmationCode(user: UserDocument, email: string) {
     const confirmationCode = randomUUID();
+    const expirationTimeInHours =
+      this.usersConfig.AUTH_CONFIRMATION_CODE_EXPIRATION_TIME_IN_HOURS;
+    const expirationDate = add(new Date(), { hours: expirationTimeInHours });
 
-    user.setConfirmationCode(confirmationCode);
+    user.setConfirmationCode(confirmationCode, expirationDate);
 
     await this.usersRepository.save(user);
 

@@ -15,8 +15,8 @@ import { NotificationsModule } from '../notification/notification.module';
 import { LocalStrategy } from './guards/local/local.strategy';
 import { JwtStrategy } from './guards/bearer/jwt.strategy';
 import { JwtModule } from '@nestjs/jwt';
-import { ACCESS_TOKEN_EXPIRATION_TIME } from '../../constants';
 import { AuthQueryRepository } from './infrastructure/query/auth.query-repository';
+import { UsersConfig } from './users.config';
 
 @Module({
   // This will allow injecting the UserModel into the providers in this module
@@ -24,9 +24,10 @@ import { AuthQueryRepository } from './infrastructure/query/auth.query-repositor
     MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
     PassportModule,
     JwtModule.registerAsync({
+      imports: [],
       useFactory: async () => ({
         secret: process.env.JWT_SECRET,
-        signOptions: { expiresIn: ACCESS_TOKEN_EXPIRATION_TIME },
+        // signOptions: { expiresIn: AUTH_ACCESS_TOKEN_EXPIRATION_TIME },
       }),
     }),
     NotificationsModule,
@@ -43,6 +44,7 @@ import { AuthQueryRepository } from './infrastructure/query/auth.query-repositor
     AuthQueryRepository,
     LocalStrategy,
     JwtStrategy,
+    UsersConfig,
   ],
   exports: [MongooseModule],
   /* We re-export the MongooseModule if we want the models registered here to be injectable 

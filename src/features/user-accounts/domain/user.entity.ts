@@ -1,11 +1,7 @@
-import { add } from 'date-fns/add';
 import { Schema, Prop, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, Model, SchemaTimestampsConfig } from 'mongoose';
 import { CreateUserDto } from './dto/create/users.create-dto';
-import {
-  CONFIRMATION_CODE_EXPIRATION_TIME_IN_HOURS,
-  RECOVERY_CODE_EXPIRATION_TIME_IN_HOURS,
-} from '../../../constants';
+import { RECOVERY_CODE_EXPIRATION_TIME_IN_HOURS } from '../../../constants';
 import { BadRequestDomainException } from '../../../core/exceptions/domain-exceptions';
 
 export enum DeletionStatus {
@@ -102,7 +98,7 @@ export class User {
     return user as UserDocument;
   }
 
-  setConfirmationCode(code: string) {
+  setConfirmationCode(code: string, expirationDate: Date) {
     if (this.emailConfirmation.isConfirmed) {
       throw BadRequestDomainException.create(
         'The user has already been confirmed',
@@ -115,9 +111,7 @@ export class User {
     }
 
     this.emailConfirmation.confirmationCode = code;
-    this.emailConfirmation.expirationDate = add(new Date(), {
-      hours: CONFIRMATION_CODE_EXPIRATION_TIME_IN_HOURS,
-    });
+    this.emailConfirmation.expirationDate = expirationDate;
   }
 
   confirmUserEmail(code: string) {
