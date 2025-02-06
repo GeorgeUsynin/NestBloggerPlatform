@@ -1,16 +1,18 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { UsersRepository } from '../infrastructure/users.repository';
 import { CryptoService } from './crypto.service';
 import { UserContextDto } from '../guards/dto/user-context.dto';
 import { LoginSuccessViewDto } from '../api/dto/view-dto/login-success.view-dto';
+import { ACCESS_TOKEN_STRATEGY_INJECT_TOKEN } from '../constants';
 
 @Injectable()
 export class AuthService {
   constructor(
     private usersRepository: UsersRepository,
     private cryptoService: CryptoService,
-    private jwtService: JwtService,
+    @Inject(ACCESS_TOKEN_STRATEGY_INJECT_TOKEN)
+    private accessTokenContext: JwtService,
   ) {}
 
   async validateUser(
@@ -38,7 +40,7 @@ export class AuthService {
 
   async login(userId: string): Promise<LoginSuccessViewDto> {
     const payload = { id: userId };
-    const accessToken = this.jwtService.sign(payload);
+    const accessToken = this.accessTokenContext.sign(payload);
 
     return { accessToken };
   }

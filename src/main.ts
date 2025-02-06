@@ -3,22 +3,24 @@ import { AppModule } from './app.module';
 import { appSetup } from './setup/app.setup';
 import { createWriteStream } from 'fs';
 import { get } from 'http';
-
-const PORT = process.env.PORT ?? 3000;
-const serverUrl = `http://localhost:${PORT}`;
+import { CoreConfig } from './core/core.config';
+import { ENVIRONMENTS } from './constants';
 
 async function bootstrap() {
   // Create the NestJS application
   const app = await NestFactory.create(AppModule);
+  const coreConfig = app.get<CoreConfig>(CoreConfig);
 
   // Setup the application
   appSetup(app);
 
   // Start the server
-  await app.listen(PORT);
+  await app.listen(coreConfig.PORT);
 
   // get the swagger json file (if app is running in development mode)
-  if (process.env.NODE_ENV === 'development') {
+  if (coreConfig.NODE_ENV === ENVIRONMENTS.DEVELOPMENT) {
+    const serverUrl = `${coreConfig.SERVER_URL}:${coreConfig.PORT}`;
+
     // write swagger ui files
     get(`${serverUrl}/api/swagger-ui-bundle.js`, function (response) {
       response.pipe(createWriteStream('swagger-static/swagger-ui-bundle.js'));

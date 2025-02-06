@@ -10,29 +10,35 @@ import { RegistrationService } from './application/registration.service';
 import { CryptoService } from './application/crypto.service';
 import { PasswordService } from './application/password.service';
 import { AuthController } from './api/auth.controller';
-import { PassportModule } from '@nestjs/passport';
 import { NotificationsModule } from '../notification/notification.module';
 import { LocalStrategy } from './guards/local/local.strategy';
 import { JwtStrategy } from './guards/bearer/jwt.strategy';
-import { JwtModule } from '@nestjs/jwt';
-import { ACCESS_TOKEN_EXPIRATION_TIME } from '../../constants';
+import { JwtModule, JwtService } from '@nestjs/jwt';
 import { AuthQueryRepository } from './infrastructure/query/auth.query-repository';
+import { UserAccountsConfig } from './config';
+import { ACCESS_TOKEN_STRATEGY_INJECT_TOKEN } from './constants/constants';
 
 @Module({
   // This will allow injecting the UserModel into the providers in this module
   imports: [
     MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
-    PassportModule,
-    JwtModule.registerAsync({
-      useFactory: async () => ({
-        secret: process.env.JWT_SECRET,
-        signOptions: { expiresIn: ACCESS_TOKEN_EXPIRATION_TIME },
-      }),
-    }),
+    JwtModule,
     NotificationsModule,
   ],
   controllers: [AuthController, UsersController],
   providers: [
+    {
+      provide: ACCESS_TOKEN_STRATEGY_INJECT_TOKEN,
+      useFactory: (userAccountConfig: UserAccountsConfig): JwtService => {
+        return new JwtService({
+          secret: userAccountConfig.JWT_SECRET,
+          signOptions: {
+            expiresIn: userAccountConfig.ACCESS_TOKEN_EXPIRATION_TIME,
+          },
+        });
+      },
+      inject: [UserAccountsConfig],
+    },
     AuthService,
     CryptoService,
     RegistrationService,
@@ -43,6 +49,7 @@ import { AuthQueryRepository } from './infrastructure/query/auth.query-repositor
     AuthQueryRepository,
     LocalStrategy,
     JwtStrategy,
+    UserAccountsConfig,
   ],
   exports: [MongooseModule],
   /* We re-export the MongooseModule if we want the models registered here to be injectable 

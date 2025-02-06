@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { EmailAdapter } from './email.adapter';
 import { EmailManager } from './email.manager';
-import { EMAIL_SERVICE } from '../../constants';
+import { EMAIL_SERVICE } from './constants';
 
 @Module({
   imports: [

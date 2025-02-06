@@ -1,3 +1,7 @@
+// Option: 1
+// Config module must be on the top of imports because it will initialize env variables when app is running for the first time
+import { configModule } from './config-module';
+
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { AppController } from './app.controller';
@@ -5,9 +9,9 @@ import { UsersAccountsModule } from './features/user-accounts/usersAccounts.modu
 import { BloggersPlatformModule } from './features/bloggers-platform/bloggers-platform.module';
 import { TestingModule } from './features/testing/testing.module';
 import { CoreModule } from './core/core.module';
-import { ConfigModule } from '@nestjs/config';
-import { DB_NAME } from './constants';
 import { ServeStaticModule } from '@nestjs/serve-static';
+import { ENVIRONMENTS } from './constants';
+import { CoreConfig } from './core/core.config';
 import { join } from 'path';
 
 @Module({
@@ -15,20 +19,24 @@ import { join } from 'path';
     // Serve static files from swagger-static folder
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '..', 'swagger-static'),
-      serveRoot: process.env.NODE_ENV === 'development' ? '/' : '/api',
+      serveRoot:
+        process.env.NODE_ENV === ENVIRONMENTS.DEVELOPMENT ? '/' : '/api',
     }),
-    // Load environment variables
-    ConfigModule.forRoot(),
     // Connect to MongoDB
-    MongooseModule.forRoot(process.env.MONGO_URL || 'mongodb://localhost', {
-      dbName: DB_NAME,
+    MongooseModule.forRootAsync({
+      useFactory: (coreConfig: CoreConfig) => ({
+        uri: coreConfig.MONGO_URL,
+        dbName: coreConfig.DB_NAME,
+      }),
+      inject: [CoreConfig],
     }),
     CoreModule,
     UsersAccountsModule,
     BloggersPlatformModule,
     TestingModule,
+    // Load environment variables
+    configModule,
   ],
   controllers: [AppController],
-  providers: [],
 })
 export class AppModule {}
