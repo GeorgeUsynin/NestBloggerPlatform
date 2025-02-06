@@ -17,8 +17,10 @@ export class DomainException extends Error {
   }
 }
 
-//используем typescript mixin для создания классов с одинаковым статическим методом create
-//https://www.typescriptlang.org/docs/handbook/mixins.html
+/**
+ * Using typescript mixin to create classes with the same static create method
+ * https://www.typescriptlang.org/docs/handbook/mixins.html
+ */
 function ConcreteDomainExceptionFactory(
   commonMessage: string,
   code: DomainExceptionCode,
@@ -51,7 +53,7 @@ export const UnauthorizedDomainException = ConcreteDomainExceptionFactory(
   DomainExceptionCode.Unauthorized,
 );
 
-//создание классов без миксинов
+// Creating classes without mixins
 
 // export class BadRequestDomainException extends DomainException {
 //   constructor(errorsMessages: ErrorExtension[]) {

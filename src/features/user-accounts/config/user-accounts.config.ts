@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { IsNotEmpty, IsNumber } from 'class-validator';
+import { IsBoolean, IsNotEmpty, IsNumber } from 'class-validator';
 import { ENV_VARIABLE_NAMES } from '../../../constants';
-import { configValidationUtility } from '../../../setup/config-validation.utility';
+import { configValidationUtility } from '../../../core/config';
 
 @Injectable()
 export class UserAccountsConfig {
@@ -38,6 +38,31 @@ export class UserAccountsConfig {
   [ENV_VARIABLE_NAMES.JWT_SECRET]: string = this.configService.get(
     ENV_VARIABLE_NAMES.JWT_SECRET,
   ) as string;
+
+  @IsNotEmpty({
+    message: 'Set Env variable LOGIN, example: basic auth login',
+  })
+  [ENV_VARIABLE_NAMES.LOGIN]: string = this.configService.get(
+    ENV_VARIABLE_NAMES.LOGIN,
+  ) as string;
+
+  @IsNotEmpty({
+    message: 'Set Env variable PASSWORD, example: basic auth password',
+  })
+  [ENV_VARIABLE_NAMES.PASSWORD]: string = this.configService.get(
+    ENV_VARIABLE_NAMES.PASSWORD,
+  ) as string;
+
+  @IsBoolean({
+    message:
+      'Set Env variable IS_USER_AUTOMATICALLY_CONFIRMED to confirm user registration, example: true, available values: true, false',
+  })
+  [ENV_VARIABLE_NAMES.IS_USER_AUTOMATICALLY_CONFIRMED]: boolean =
+    configValidationUtility.convertToBoolean(
+      this.configService.get(
+        ENV_VARIABLE_NAMES.IS_USER_AUTOMATICALLY_CONFIRMED,
+      ) as string,
+    ) as boolean;
 
   constructor(private configService: ConfigService) {
     configValidationUtility.validateConfig(this);

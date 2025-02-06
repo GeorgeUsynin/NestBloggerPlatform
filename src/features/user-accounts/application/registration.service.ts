@@ -45,7 +45,12 @@ export class RegistrationService {
       password: passwordHash,
     });
 
-    await this.sendEmailConfirmationCode(newUser, email);
+    if (this.usersConfig.IS_USER_AUTOMATICALLY_CONFIRMED) {
+      newUser.emailConfirmation.isConfirmed = true;
+      this.usersRepository.save(newUser);
+    } else {
+      await this.sendEmailConfirmationCode(newUser, email);
+    }
   }
 
   async registrationConfirmation(code: string): Promise<void> {

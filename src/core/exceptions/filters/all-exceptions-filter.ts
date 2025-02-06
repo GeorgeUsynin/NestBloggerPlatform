@@ -1,10 +1,15 @@
-//Все ошибки
+//All errors
 import { Catch, HttpException, HttpStatus } from '@nestjs/common';
 import { BaseExceptionFilter } from './base-exception-filter';
 import { Request, Response } from 'express';
+import { CoreConfig } from '../../config/core.config';
 
 @Catch()
 export class AllExceptionsFilter extends BaseExceptionFilter {
+  constructor(private coreConfig: CoreConfig) {
+    super();
+  }
+
   onCatch(exception: unknown, response: Response, request: Request): void {
     const status =
       exception instanceof HttpException
@@ -12,7 +17,8 @@ export class AllExceptionsFilter extends BaseExceptionFilter {
         : HttpStatus.INTERNAL_SERVER_ERROR;
 
     //TODO: Replace with getter from configService. will be in the following lessons
-    const isProduction = process.env.NODE_ENV === 'production';
+
+    const isProduction = this.coreConfig.NODE_ENV === 'production';
 
     if (isProduction && status === HttpStatus.INTERNAL_SERVER_ERROR) {
       response.status(status).json({

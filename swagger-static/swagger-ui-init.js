@@ -25,6 +25,21 @@ window.onload = function() {
           ]
         }
       },
+      "/testing/all-data": {
+        "delete": {
+          "operationId": "TestingController_deleteAll",
+          "parameters": [],
+          "responses": {
+            "204": {
+              "description": "All data is deleted"
+            }
+          },
+          "summary": "Clear database: delete all data from all tables/collections",
+          "tags": [
+            "Testing"
+          ]
+        }
+      },
       "/auth/me": {
         "get": {
           "operationId": "AuthController_me",
@@ -1308,21 +1323,6 @@ window.onload = function() {
           "summary": "Returns comment by id",
           "tags": [
             "Comments"
-          ]
-        }
-      },
-      "/testing/all-data": {
-        "delete": {
-          "operationId": "TestingController_deleteAll",
-          "parameters": [],
-          "responses": {
-            "204": {
-              "description": "All data is deleted"
-            }
-          },
-          "summary": "Clear database: delete all data from all tables/collections",
-          "tags": [
-            "Testing"
           ]
         }
       }

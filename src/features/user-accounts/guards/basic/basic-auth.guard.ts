@@ -3,10 +3,14 @@ import { Request } from 'express';
 import { Reflector } from '@nestjs/core';
 import { IS_PUBLIC_KEY } from '../decorators/public.decorator';
 import { UnauthorizedDomainException } from '../../../../core/exceptions/domain-exceptions';
+import { UserAccountsConfig } from '../../config';
 
 @Injectable()
 export class BasicAuthGuard implements CanActivate {
-  constructor(private reflector: Reflector) {}
+  constructor(
+    private reflector: Reflector,
+    private userAccountConfig: UserAccountsConfig,
+  ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest<Request>();
@@ -32,7 +36,10 @@ export class BasicAuthGuard implements CanActivate {
     );
     const [login, password] = credentials.split(':');
 
-    if (login === process.env.LOGIN && password === process.env.PASSWORD) {
+    if (
+      login === this.userAccountConfig.LOGIN &&
+      password === this.userAccountConfig.PASSWORD
+    ) {
       return true;
     } else {
       throw UnauthorizedDomainException.create();

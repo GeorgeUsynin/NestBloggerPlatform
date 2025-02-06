@@ -1,6 +1,6 @@
 import { validateSync } from 'class-validator';
 
-// просто утилита, даже не классом её сделали, чтобы не париться с DI и использовать её напрямую где надо нам.
+// A simple utility, not even made as a class to avoid DI complexity and use it directly where needed.
 export const configValidationUtility = {
   validateConfig: (config: any) => {
     const errors = validateSync(config);

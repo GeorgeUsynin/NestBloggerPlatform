@@ -3,8 +3,9 @@ import { globalPrefixSetup } from './global-prefix.setup';
 import { pipesSetup } from './pipes.setup';
 import { swaggerSetup } from './swagger.setup';
 import { exceptionFilterSetup } from './exception-filter.setup';
+import { CoreConfig } from '../core/config';
 
-export function appSetup(app: INestApplication) {
+export function appSetup(app: INestApplication, coreConfig: CoreConfig) {
   // Enable CORS
   app.enableCors();
   // Setup global pipes
@@ -12,7 +13,7 @@ export function appSetup(app: INestApplication) {
   // Setup global prefix
   globalPrefixSetup(app);
   // Setup swagger
-  swaggerSetup(app);
+  swaggerSetup(app, coreConfig);
   // Setup exception filters
-  exceptionFilterSetup(app);
+  exceptionFilterSetup(app, coreConfig);
 }

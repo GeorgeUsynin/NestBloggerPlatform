@@ -1,8 +1,7 @@
-// Option: 1
 // Config module must be on the top of imports because it will initialize env variables when app is running for the first time
 import { configModule } from './config-module';
 
-import { Module } from '@nestjs/common';
+import { DynamicModule, Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { AppController } from './app.controller';
 import { UsersAccountsModule } from './features/user-accounts/usersAccounts.module';
@@ -11,16 +10,23 @@ import { TestingModule } from './features/testing/testing.module';
 import { CoreModule } from './core/core.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { ENVIRONMENTS } from './constants';
-import { CoreConfig } from './core/core.config';
+import { CoreConfig } from './core/config';
 import { join } from 'path';
 
 @Module({
   imports: [
     // Serve static files from swagger-static folder
-    ServeStaticModule.forRoot({
-      rootPath: join(__dirname, '..', 'swagger-static'),
-      serveRoot:
-        process.env.NODE_ENV === ENVIRONMENTS.DEVELOPMENT ? '/' : '/api',
+    ServeStaticModule.forRootAsync({
+      useFactory: (coreConfig: CoreConfig) => {
+        return [
+          {
+            rootPath: join(__dirname, '..', 'swagger-static'),
+            serveRoot:
+              coreConfig.NODE_ENV === ENVIRONMENTS.DEVELOPMENT ? '/' : '/api',
+          },
+        ];
+      },
+      inject: [CoreConfig],
     }),
     // Connect to MongoDB
     MongooseModule.forRootAsync({
@@ -33,10 +39,22 @@ import { join } from 'path';
     CoreModule,
     UsersAccountsModule,
     BloggersPlatformModule,
-    TestingModule,
     // Load environment variables
     configModule,
   ],
   controllers: [AppController],
 })
-export class AppModule {}
+export class AppModule {
+  static async forRoot(coreConfig: CoreConfig): Promise<DynamicModule> {
+    /**
+     * We use this sophisticated approach to add an optional module to the main modules.
+     * We avoid accessing environment variables through process.env in the decorator because
+     * decorators are executed during the compilation of all modules before the NestJS lifecycle starts
+     */
+
+    return {
+      module: AppModule,
+      imports: [...(coreConfig.INCLUDE_TESTING_MODULE ? [TestingModule] : [])], // Add dynamic modules here
+    };
+  }
+}
