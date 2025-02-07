@@ -1,14 +1,13 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
+import { CqrsModule } from '@nestjs/cqrs';
 import { UsersController } from './api/users.controller';
-import { UsersService } from './application/users.service';
 import { UserSchema, User } from './domain/user.entity';
 import { UsersRepository } from './infrastructure/users.repository';
 import { UsersQueryRepository } from './infrastructure/query/users.query-repository';
 import { AuthService } from './application/auth.service';
 import { RegistrationService } from './application/registration.service';
 import { CryptoService } from './application/crypto.service';
-import { PasswordService } from './application/password.service';
 import { AuthController } from './api/auth.controller';
 import { NotificationsModule } from '../notification/notification.module';
 import { LocalStrategy } from './guards/local/local.strategy';
@@ -17,10 +16,35 @@ import { JwtModule, JwtService } from '@nestjs/jwt';
 import { AuthQueryRepository } from './infrastructure/query/auth.query-repository';
 import { UserAccountsConfig } from './config';
 import { ACCESS_TOKEN_STRATEGY_INJECT_TOKEN } from './constants/constants';
+import {
+  ChangePasswordUseCase,
+  CreateUserUseCase,
+  DeleteUserUseCase,
+  LoginUseCase,
+  RecoverPasswordUseCase,
+  RegisterUserUseCase,
+  RegistrationConfirmationUseCase,
+  RegistrationEmailResendingUseCase,
+} from './application/use-cases';
+
+const useCases = [
+  CreateUserUseCase,
+  DeleteUserUseCase,
+  RegisterUserUseCase,
+  RegistrationConfirmationUseCase,
+  RegistrationEmailResendingUseCase,
+  ChangePasswordUseCase,
+  RecoverPasswordUseCase,
+  LoginUseCase,
+];
+const strategies = [LocalStrategy, JwtStrategy];
+const queryRepositories = [UsersQueryRepository, AuthQueryRepository];
+const services = [AuthService, CryptoService, RegistrationService];
 
 @Module({
   // This will allow injecting the UserModel into the providers in this module
   imports: [
+    CqrsModule.forRoot(),
     MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
     JwtModule,
     NotificationsModule,
@@ -39,17 +63,13 @@ import { ACCESS_TOKEN_STRATEGY_INJECT_TOKEN } from './constants/constants';
       },
       inject: [UserAccountsConfig],
     },
-    AuthService,
-    CryptoService,
-    RegistrationService,
-    UsersService,
-    PasswordService,
+
     UsersRepository,
-    UsersQueryRepository,
-    AuthQueryRepository,
-    LocalStrategy,
-    JwtStrategy,
     UserAccountsConfig,
+    ...queryRepositories,
+    ...services,
+    ...strategies,
+    ...useCases,
   ],
   exports: [MongooseModule],
   /* We re-export the MongooseModule if we want the models registered here to be injectable 

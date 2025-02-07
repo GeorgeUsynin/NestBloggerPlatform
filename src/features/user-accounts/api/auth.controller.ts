@@ -7,13 +7,11 @@ import {
   Post,
   UseGuards,
 } from '@nestjs/common';
+import { CommandBus } from '@nestjs/cqrs';
 import { ExtractUserFromRequest } from '../guards/decorators/params/ExtractUserFromRequest.decorator';
 import { UserContextDto } from '../guards/dto/user-context.dto';
 import { LocalAuthGuard } from '../guards/local/local-auth.guard';
 import { JwtAuthGuard } from '../guards/bearer/jwt-auth.guard';
-import { AuthService } from '../application/auth.service';
-import { PasswordService } from '../application/password.service';
-import { RegistrationService } from '../application/registration.service';
 import { CreateUserInputDto } from './dto/input-dto/create/users.input-dto';
 import { RegistrationConfirmationInputDto } from './dto/input-dto/registration-confirmation.input-dto';
 import { RegistrationEmailResendingInputDto } from './dto/input-dto/registration-email-resending.input-dto';
@@ -32,14 +30,20 @@ import {
 } from './swagger';
 import { NewPasswordApi } from './swagger/auth/new-password.decorator';
 import { ApiBearerAuth } from '@nestjs/swagger';
+import {
+  ChangePasswordCommand,
+  LoginCommand,
+  RecoverPasswordCommand,
+  RegisterUserCommand,
+  RegistrationConfirmationCommand,
+  RegistrationEmailResendingCommand,
+} from '../application/use-cases';
 
 @Controller('auth')
 export class AuthController {
   constructor(
-    private authService: AuthService,
-    private registrationService: RegistrationService,
-    private passwordService: PasswordService,
     private authQueryRepository: AuthQueryRepository,
+    private commandBus: CommandBus,
   ) {}
 
   @ApiBearerAuth()
@@ -58,7 +62,9 @@ export class AuthController {
   async login(
     @ExtractUserFromRequest() user: UserContextDto,
   ): Promise<LoginSuccessViewDto> {
-    const accessToken = await this.authService.login(user.id);
+    const accessToken = await this.commandBus.execute(
+      new LoginCommand(user.id),
+    );
 
     return accessToken;
   }
@@ -67,7 +73,7 @@ export class AuthController {
   @HttpCode(HttpStatus.NO_CONTENT)
   @RegistrationApi()
   async registration(@Body() body: CreateUserInputDto): Promise<void> {
-    await this.registrationService.registerUser(body);
+    return this.commandBus.execute(new RegisterUserCommand(body));
   }
 
   @Post('registration-confirmation')
@@ -78,7 +84,7 @@ export class AuthController {
   ): Promise<void> {
     const { code } = body;
 
-    await this.registrationService.registrationConfirmation(code);
+    return this.commandBus.execute(new RegistrationConfirmationCommand(code));
   }
 
   @Post('registration-email-resending')
@@ -89,7 +95,9 @@ export class AuthController {
   ): Promise<void> {
     const { email } = body;
 
-    await this.registrationService.registrationEmailResending(email);
+    return this.commandBus.execute(
+      new RegistrationEmailResendingCommand(email),
+    );
   }
 
   @Post('password-recovery')
@@ -100,7 +108,7 @@ export class AuthController {
   ): Promise<void> {
     const { email } = body;
 
-    await this.passwordService.recoverPassword(email);
+    return this.commandBus.execute(new RecoverPasswordCommand(email));
   }
 
   @Post('new-password')
@@ -109,6 +117,8 @@ export class AuthController {
   async newPassword(@Body() body: NewPasswordInputDto): Promise<void> {
     const { newPassword, recoveryCode } = body;
 
-    await this.passwordService.changePassword(newPassword, recoveryCode);
+    return this.commandBus.execute(
+      new ChangePasswordCommand(newPassword, recoveryCode),
+    );
   }
 }

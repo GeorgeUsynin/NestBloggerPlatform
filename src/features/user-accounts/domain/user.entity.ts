@@ -28,13 +28,13 @@ export const emailConstraints = {
 // The timestamp flag automatically adds the updatedAt and createdAt fields
 @Schema({ timestamps: true })
 export class User {
-  @Prop({ type: String, required: true, ...loginConstraints })
+  @Prop({ type: String, required: true, unique: true, ...loginConstraints })
   login: string;
 
   @Prop({ type: String, required: true })
   passwordHash: string;
 
-  @Prop({ type: String, required: true, ...emailConstraints })
+  @Prop({ type: String, required: true, unique: true, ...emailConstraints })
   email: string;
 
   @Prop({ enum: DeletionStatus, default: DeletionStatus.NotDeleted })
@@ -78,23 +78,13 @@ export class User {
     expirationDate: Date | null;
   };
 
-  static createUnconfirmedUser(dto: CreateUserDto): UserDocument {
+  static createUser(dto: CreateUserDto): UserDocument {
     // UserDocument!
     const user = new this(); //UserModel!
+
     user.email = dto.email;
     user.passwordHash = dto.password;
     user.login = dto.login;
-
-    return user as UserDocument;
-  }
-
-  static createConfirmedUser(dto: CreateUserDto): UserDocument {
-    // UserDocument!
-    const user = new this(); //UserModel!
-    user.email = dto.email;
-    user.passwordHash = dto.password;
-    user.login = dto.login;
-    user.emailConfirmation.isConfirmed = true;
 
     return user as UserDocument;
   }

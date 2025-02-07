@@ -10,10 +10,10 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common';
+import { CommandBus } from '@nestjs/cqrs';
 import { ApiBasicAuth } from '@nestjs/swagger';
 import { UsersQueryRepository } from '../infrastructure/query/users.query-repository';
 import { UserViewDto } from './dto/view-dto/user.view-dto';
-import { UsersService } from '../application/users.service';
 import { CreateUserInputDto } from './dto/input-dto/create/users.input-dto';
 import { GetUsersQueryParams } from './dto/query-params-dto/get-users-query-params.input-dto';
 import { PaginatedViewDto } from '../../../core/dto/base.paginated.view-dto';
@@ -25,6 +25,7 @@ import {
   GetAllUsersApi,
   GetUserApi,
 } from './swagger';
+import { CreateUserCommand, DeleteUserCommand } from '../application/use-cases';
 
 @Controller('users')
 @ApiBasicAuth()
@@ -32,7 +33,7 @@ import {
 export class UsersController {
   constructor(
     private usersQueryRepository: UsersQueryRepository,
-    private usersService: UsersService,
+    private commandBus: CommandBus,
   ) {}
 
   @Public()
@@ -56,7 +57,7 @@ export class UsersController {
   @HttpCode(HttpStatus.CREATED)
   @CreateUserApi()
   async createUser(@Body() body: CreateUserInputDto): Promise<UserViewDto> {
-    const userId = await this.usersService.createUser(body);
+    const userId = await this.commandBus.execute(new CreateUserCommand(body));
 
     return this.usersQueryRepository.getByIdOrNotFoundFail(userId);
   }
@@ -65,6 +66,6 @@ export class UsersController {
   @HttpCode(HttpStatus.NO_CONTENT)
   @DeleteUserApi()
   async deleteUser(@Param('id') id: string): Promise<void> {
-    return this.usersService.deleteUser(id);
+    return this.commandBus.execute(new DeleteUserCommand(id));
   }
 }

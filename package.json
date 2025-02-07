@@ -45,6 +45,7 @@
     "rxjs": "^7.8.1"
   },
   "devDependencies": {
+    "@nestjs/cqrs": "^11.0.1",
     "@nestjs/schematics": "^10.0.0",
     "@nestjs/testing": "^10.0.0",
     "@types/date-fns": "^2.6.3",

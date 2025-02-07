@@ -1,18 +1,14 @@
-import { Inject, Injectable } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
+import { Injectable } from '@nestjs/common';
 import { UsersRepository } from '../infrastructure/users.repository';
 import { CryptoService } from './crypto.service';
 import { UserContextDto } from '../guards/dto/user-context.dto';
-import { LoginSuccessViewDto } from '../api/dto/view-dto/login-success.view-dto';
-import { ACCESS_TOKEN_STRATEGY_INJECT_TOKEN } from '../constants';
+import { UnauthorizedDomainException } from '../../../core/exceptions/domain-exceptions';
 
 @Injectable()
 export class AuthService {
   constructor(
     private usersRepository: UsersRepository,
     private cryptoService: CryptoService,
-    @Inject(ACCESS_TOKEN_STRATEGY_INJECT_TOKEN)
-    private accessTokenContext: JwtService,
   ) {}
 
   async validateUser(
@@ -26,6 +22,11 @@ export class AuthService {
       return null;
     }
 
+    // check if user's email is confirmed
+    if (!user.emailConfirmation.isConfirmed) {
+      throw UnauthorizedDomainException.create('Email is not confirmed');
+    }
+
     const isValidPassword = await this.cryptoService.comparePassword(
       password,
       user.passwordHash,
@@ -36,12 +37,5 @@ export class AuthService {
     }
 
     return { id: user._id.toString() };
-  }
-
-  async login(userId: string): Promise<LoginSuccessViewDto> {
-    const payload = { id: userId };
-    const accessToken = this.accessTokenContext.sign(payload);
-
-    return { accessToken };
   }
 }
