@@ -1289,6 +1289,49 @@ window.onload = function() {
           "tags": [
             "Posts"
           ]
+        },
+        "post": {
+          "operationId": "PostsController_createCommentByPostId",
+          "parameters": [
+            {
+              "name": "postId",
+              "required": true,
+              "in": "path",
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateCommentInputDto"
+                }
+              }
+            }
+          },
+          "responses": {
+            "201": {
+              "description": "",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/CommentViewDto"
+                  }
+                }
+              }
+            }
+          },
+          "security": [
+            {
+              "bearer": []
+            }
+          ],
+          "tags": [
+            "Posts"
+          ]
         }
       },
       "/comments/{id}": {
@@ -1321,6 +1364,68 @@ window.onload = function() {
             }
           },
           "summary": "Returns comment by id",
+          "tags": [
+            "Comments"
+          ]
+        },
+        "put": {
+          "operationId": "CommentsController_updateCommentById",
+          "parameters": [
+            {
+              "name": "id",
+              "required": true,
+              "in": "path",
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdateCommentInputDto"
+                }
+              }
+            }
+          },
+          "responses": {
+            "204": {
+              "description": ""
+            }
+          },
+          "security": [
+            {
+              "bearer": []
+            }
+          ],
+          "tags": [
+            "Comments"
+          ]
+        },
+        "delete": {
+          "operationId": "CommentsController_deleteCommentById",
+          "parameters": [
+            {
+              "name": "id",
+              "required": true,
+              "in": "path",
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "responses": {
+            "204": {
+              "description": ""
+            }
+          },
+          "security": [
+            {
+              "bearer": []
+            }
+          ],
           "tags": [
             "Comments"
           ]
@@ -1855,6 +1960,17 @@ window.onload = function() {
             "blogId"
           ]
         },
+        "CreateCommentInputDto": {
+          "type": "object",
+          "properties": {
+            "content": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "content"
+          ]
+        },
         "SwaggerUpdatePostInputDto": {
           "type": "object",
           "properties": {
@@ -1879,6 +1995,17 @@ window.onload = function() {
             "shortDescription",
             "content",
             "blogId"
+          ]
+        },
+        "UpdateCommentInputDto": {
+          "type": "object",
+          "properties": {
+            "content": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "content"
           ]
         }
       }

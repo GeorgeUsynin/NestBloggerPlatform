@@ -10,16 +10,15 @@ import {
   Put,
   Query,
 } from '@nestjs/common';
+import { CommandBus } from '@nestjs/cqrs';
 import { GetBlogsQueryParams } from './dto/query-params-dto/get-blogs-query-params.input-dto';
 import { PaginatedViewDto } from '../../../core/dto/base.paginated.view-dto';
 import { BlogViewDto } from './dto/view-dto/blogs.view-dto';
 import { BlogsQueryRepository } from '../infrastructure/blogs.query-repository';
 import { CreateBlogInputDto } from './dto/input-dto/create/blogs.input-dto';
-import { BlogsService } from '../application/blogs.service';
 import { UpdateBlogInputDto } from './dto/input-dto/update/blogs.input-dto';
 import { CreatePostInputDto } from './dto/input-dto/create/posts.input-dto';
 import { PostViewDto } from './dto/view-dto/posts.view-dto';
-import { PostsService } from '../application/posts.service';
 import { PostsQueryRepository } from '../infrastructure/posts.query-repository';
 import { GetPostsQueryParams } from './dto/query-params-dto/get-posts-query-params.input-dto copy';
 import {
@@ -31,14 +30,20 @@ import {
   UpdateBlogApi,
   DeleteBlogApi,
 } from './swagger';
+import { ObjectIdValidationPipe } from '../../../core/pipes/objectId-validation-pipe';
+import {
+  CreateBlogCommand,
+  DeleteBlogCommand,
+  UpdateBlogCommand,
+  CreatePostCommand,
+} from '../application/use-cases';
 
 @Controller('blogs')
 export class BlogsController {
   constructor(
-    private blogsService: BlogsService,
     private blogsQueryRepository: BlogsQueryRepository,
-    private postsService: PostsService,
     private postsQueryRepository: PostsQueryRepository,
+    private commandBus: CommandBus,
   ) {}
 
   @Get()
@@ -53,7 +58,9 @@ export class BlogsController {
   @Get(':id')
   @HttpCode(HttpStatus.OK)
   @GetBlogApi()
-  async getBlogById(@Param('id') id: string): Promise<BlogViewDto> {
+  async getBlogById(
+    @Param('id', ObjectIdValidationPipe) id: string,
+  ): Promise<BlogViewDto> {
     return this.blogsQueryRepository.getByIdOrNotFoundFail(id);
   }
 
@@ -62,7 +69,7 @@ export class BlogsController {
   @GetAllPostsByBlogIdApi()
   async getAllPostsByBlogId(
     @Query() query: GetPostsQueryParams,
-    @Param('blogId') blogId: string,
+    @Param('blogId', ObjectIdValidationPipe) blogId: string,
   ): Promise<PaginatedViewDto<PostViewDto[]>> {
     return this.postsQueryRepository.getAllPostsByBlogId(query, blogId);
   }
@@ -71,7 +78,9 @@ export class BlogsController {
   @HttpCode(HttpStatus.CREATED)
   @CreateBlogApi()
   async createBlog(@Body() payload: CreateBlogInputDto): Promise<BlogViewDto> {
-    const blogId = await this.blogsService.createBlog(payload);
+    const blogId = await this.commandBus.execute(
+      new CreateBlogCommand(payload),
+    );
 
     return this.blogsQueryRepository.getByIdOrNotFoundFail(blogId);
   }
@@ -80,13 +89,15 @@ export class BlogsController {
   @HttpCode(HttpStatus.CREATED)
   @CreatePostByBlogIdApi()
   async createPostByBlogID(
-    @Param('blogId') blogId: string,
+    @Param('blogId', ObjectIdValidationPipe) blogId: string,
     @Body() payload: Omit<CreatePostInputDto, 'blogId'>,
   ): Promise<PostViewDto> {
-    const postId = await this.postsService.createPost({
-      ...payload,
-      blogId,
-    });
+    const postId = await this.commandBus.execute(
+      new CreatePostCommand({
+        ...payload,
+        blogId,
+      }),
+    );
 
     return this.postsQueryRepository.getByIdOrNotFoundFail(postId);
   }
@@ -95,16 +106,18 @@ export class BlogsController {
   @HttpCode(HttpStatus.NO_CONTENT)
   @UpdateBlogApi()
   async updateBlogById(
-    @Param('id') id: string,
+    @Param('id', ObjectIdValidationPipe) id: string,
     @Body() payload: UpdateBlogInputDto,
-  ) {
-    await this.blogsService.updateBlogById(id, payload);
+  ): Promise<void> {
+    return this.commandBus.execute(new UpdateBlogCommand(id, payload));
   }
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   @DeleteBlogApi()
-  async deleteBlogById(@Param('id') id: string) {
-    await this.blogsService.deleteBlogById(id);
+  async deleteBlogById(
+    @Param('id', ObjectIdValidationPipe) id: string,
+  ): Promise<void> {
+    return this.commandBus.execute(new DeleteBlogCommand(id));
   }
 }

@@ -2,16 +2,22 @@ import { Schema, Prop, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, Model, SchemaTimestampsConfig } from 'mongoose';
 import { CreateCommentDto } from './dto/create/comments.create-dto';
 import { UpdateCommentDto } from './dto/update/comments.update-dto';
+import { ForbiddenDomainException } from '../../../core/exceptions/domain-exceptions';
 
 export enum DeletionStatus {
   NotDeleted = 'not-deleted',
   PermanentDeleted = 'permanent-deleted',
 }
 
+export const contentConstraints = {
+  minLength: 20,
+  maxLength: 1000,
+};
+
 // The timestamp flag automatically adds the updatedAt and createdAt fields
 @Schema({ timestamps: true })
 export class Comment {
-  @Prop({ type: String, minLength: 20, maxLength: 300, required: true })
+  @Prop({ type: String, required: true, ...contentConstraints })
   content: string;
 
   @Prop({
@@ -51,6 +57,8 @@ export class Comment {
     const comment = new this(); //this will be a CommentModel when we will call createComment method!
 
     comment.content = dto.content;
+    comment.commentatorInfo = { userId: dto.userId, userLogin: dto.userLogin };
+    comment.postId = dto.postId;
 
     return comment as CommentDocument;
   }
@@ -64,6 +72,16 @@ export class Comment {
 
   update(dto: UpdateCommentDto) {
     this.content = dto.content;
+  }
+
+  isCommentOwner(userId: string) {
+    if (this.commentatorInfo.userId !== userId) {
+      throw ForbiddenDomainException.create(
+        'You are not allowed to modify this comment',
+      );
+    }
+
+    return true;
   }
 }
 

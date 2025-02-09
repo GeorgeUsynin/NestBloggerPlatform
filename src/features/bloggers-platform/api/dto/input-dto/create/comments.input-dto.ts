@@ -1,5 +1,11 @@
-import { CreateCommentDto } from '../../../../domain/dto/create/comments.create-dto';
+import { contentConstraints } from '../../../../domain/comment.entity';
+import {
+  LengthWithMessage,
+  IsStringWithTrim,
+} from '../../../../../../core/decorators/validation';
 
-export class CreateCommentInputDto implements CreateCommentDto {
+export class CreateCommentInputDto {
+  @LengthWithMessage(contentConstraints.minLength, contentConstraints.maxLength)
+  @IsStringWithTrim()
   content: string;
 }

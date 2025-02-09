@@ -26,6 +26,7 @@ import {
   GetUserApi,
 } from './swagger';
 import { CreateUserCommand, DeleteUserCommand } from '../application/use-cases';
+import { ObjectIdValidationPipe } from '../../../core/pipes/objectId-validation-pipe';
 
 @Controller('users')
 @ApiBasicAuth()
@@ -40,7 +41,9 @@ export class UsersController {
   @Get(':id')
   @HttpCode(HttpStatus.OK)
   @GetUserApi()
-  async getById(@Param('id') id: string): Promise<UserViewDto> {
+  async getById(
+    @Param('id', ObjectIdValidationPipe) id: string,
+  ): Promise<UserViewDto> {
     return this.usersQueryRepository.getByIdOrNotFoundFail(id);
   }
 
@@ -65,7 +68,9 @@ export class UsersController {
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   @DeleteUserApi()
-  async deleteUser(@Param('id') id: string): Promise<void> {
+  async deleteUser(
+    @Param('id', ObjectIdValidationPipe) id: string,
+  ): Promise<void> {
     return this.commandBus.execute(new DeleteUserCommand(id));
   }
 }

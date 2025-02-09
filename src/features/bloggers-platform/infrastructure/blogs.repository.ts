@@ -27,6 +27,15 @@ export class BlogsRepository {
     return blog;
   }
 
+  async findBlogById(id: string) {
+    const blog = await this.BlogModel.findOne({
+      _id: id,
+      deletionStatus: { $ne: DeletionStatus.PermanentDeleted },
+    });
+
+    return blog;
+  }
+
   async save(blog: BlogDocument) {
     return blog.save();
   }
