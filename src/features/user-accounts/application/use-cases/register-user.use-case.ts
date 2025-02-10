@@ -42,7 +42,7 @@ export class RegisterUserUseCase
       await this.usersRepository.findUserByIdOrNotFoundFail(createdUserId);
 
     if (!newUser.emailConfirmation.isConfirmed) {
-      await this.registrationService.sendEmailConfirmationCode(newUser, email);
+      await this.registrationService.sendEmailConfirmationCode(newUser);
     }
   }
 }

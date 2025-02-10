@@ -1,6 +1,5 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-import { CqrsModule } from '@nestjs/cqrs';
 import { UsersController } from './api/users.controller';
 import { UserSchema, User } from './domain/user.entity';
 import { UsersRepository } from './infrastructure/users.repository';
@@ -9,7 +8,6 @@ import { AuthService } from './application/auth.service';
 import { RegistrationService } from './application/registration.service';
 import { CryptoService } from './application/crypto.service';
 import { AuthController } from './api/auth.controller';
-import { NotificationsModule } from '../notification/notification.module';
 import { LocalStrategy } from './guards/local/local.strategy';
 import { JwtStrategy } from './guards/bearer/jwt.strategy';
 import { JwtModule, JwtService } from '@nestjs/jwt';
@@ -44,10 +42,8 @@ const services = [AuthService, CryptoService, RegistrationService];
 @Module({
   // This will allow injecting the UserModel into the providers in this module
   imports: [
-    CqrsModule.forRoot(),
     MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
     JwtModule,
-    NotificationsModule,
   ],
   controllers: [AuthController, UsersController],
   providers: [

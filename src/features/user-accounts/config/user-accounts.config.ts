@@ -10,7 +10,7 @@ export class UserAccountsConfig {
     {},
     {
       message:
-        'Set Env variable CONFIRMATION_CODE_EXPIRATION_TIME_IN_HOURS, example: 1',
+        'Env variable CONFIRMATION_CODE_EXPIRATION_TIME_IN_HOURS must be an integer, example: 1',
     },
   )
   @IsNotEmpty({
@@ -23,6 +23,23 @@ export class UserAccountsConfig {
         ENV_VARIABLE_NAMES.CONFIRMATION_CODE_EXPIRATION_TIME_IN_HOURS,
       ),
     );
+
+  @IsNumber(
+    {},
+    {
+      message:
+        'Env variable CONFIRMATION_CODE_EXPIRATION_TIME_IN_HOURS must be an integer, example: 1',
+    },
+  )
+  @IsNotEmpty({
+    message:
+      'Set Env variable RECOVERY_CODE_EXPIRATION_TIME_IN_HOURS, example: 1',
+  })
+  [ENV_VARIABLE_NAMES.RECOVERY_CODE_EXPIRATION_TIME_IN_HOURS]: number = Number(
+    this.configService.get(
+      ENV_VARIABLE_NAMES.RECOVERY_CODE_EXPIRATION_TIME_IN_HOURS,
+    ),
+  );
 
   @IsNotEmpty({
     message: 'Set Env variable ACCESS_TOKEN_EXPIRATION_TIME, example: 1',

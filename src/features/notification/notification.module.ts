@@ -4,6 +4,10 @@ import { EmailAdapter } from './email.adapter';
 import { EmailManager } from './email.manager';
 import { EMAIL_SERVICE } from './constants';
 import { CoreConfig } from '../../core/config';
+import {
+  SendConfirmationEmailEventHandler,
+  SendPasswordRecoveryConfirmationEmailEventHandler,
+} from './event-handlers';
 
 @Module({
   imports: [
@@ -24,7 +28,11 @@ import { CoreConfig } from '../../core/config';
       inject: [CoreConfig],
     }),
   ],
-  providers: [EmailAdapter, EmailManager],
-  exports: [EmailManager],
+  providers: [
+    EmailAdapter,
+    EmailManager,
+    SendConfirmationEmailEventHandler,
+    SendPasswordRecoveryConfirmationEmailEventHandler,
+  ],
 })
 export class NotificationsModule {}

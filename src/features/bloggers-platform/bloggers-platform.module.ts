@@ -1,5 +1,4 @@
 import { Module } from '@nestjs/common';
-import { CqrsModule } from '@nestjs/cqrs';
 import { UsersAccountsModule } from '../user-accounts/usersAccounts.module';
 import { BlogsController } from './api/blogs.controller';
 import { PostsController } from './api/posts.controller';
@@ -52,7 +51,6 @@ const queryRepositories = [
       { name: Post.name, schema: PostSchema },
       { name: Comment.name, schema: CommentSchema },
     ]),
-    CqrsModule.forRoot(),
     UsersAccountsModule,
   ],
   controllers: [BlogsController, PostsController, CommentsController],

@@ -1,9 +1,7 @@
 import { Schema, Prop, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, Model, SchemaTimestampsConfig } from 'mongoose';
 import { CreateUserDto } from './dto/create/users.create-dto';
-import { RECOVERY_CODE_EXPIRATION_TIME_IN_HOURS } from '../../../constants';
 import { BadRequestDomainException } from '../../../core/exceptions/domain-exceptions';
-import { add } from 'date-fns/add';
 
 export enum DeletionStatus {
   NotDeleted = 'not-deleted',
@@ -125,15 +123,13 @@ export class User {
     this.emailConfirmation.isConfirmed = true;
   }
 
-  setPasswordRecoveryCode(code: string) {
+  setPasswordRecoveryCode(code: string, expirationDate: Date) {
     if (!code) {
       throw new Error('Code is not provided');
     }
 
     this.passwordRecovery.recoveryCode = code;
-    this.passwordRecovery.expirationDate = add(new Date(), {
-      hours: RECOVERY_CODE_EXPIRATION_TIME_IN_HOURS,
-    });
+    this.passwordRecovery.expirationDate = expirationDate;
   }
 
   changePassword(code: string, passwordHash: string) {
