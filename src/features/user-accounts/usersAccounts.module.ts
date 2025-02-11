@@ -13,7 +13,10 @@ import { JwtStrategy } from './guards/bearer/jwt.strategy';
 import { JwtModule, JwtService } from '@nestjs/jwt';
 import { AuthQueryRepository } from './infrastructure/query/auth.query-repository';
 import { UserAccountsConfig } from './config';
-import { ACCESS_TOKEN_STRATEGY_INJECT_TOKEN } from './constants/constants';
+import {
+  ACCESS_TOKEN_STRATEGY_INJECT_TOKEN,
+  REFRESH_TOKEN_STRATEGY_INJECT_TOKEN,
+} from './constants';
 import {
   ChangePasswordUseCase,
   CreateUserUseCase,
@@ -59,7 +62,18 @@ const services = [AuthService, CryptoService, RegistrationService];
       },
       inject: [UserAccountsConfig],
     },
-
+    {
+      provide: REFRESH_TOKEN_STRATEGY_INJECT_TOKEN,
+      useFactory: (userAccountConfig: UserAccountsConfig): JwtService => {
+        return new JwtService({
+          secret: userAccountConfig.JWT_SECRET,
+          signOptions: {
+            expiresIn: userAccountConfig.REFRESH_TOKEN_EXPIRATION_TIME,
+          },
+        });
+      },
+      inject: [UserAccountsConfig],
+    },
     UsersRepository,
     UserAccountsConfig,
     ...queryRepositories,

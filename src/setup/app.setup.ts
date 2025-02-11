@@ -1,4 +1,5 @@
 import { INestApplication } from '@nestjs/common';
+import cookieParser from 'cookie-parser';
 import { globalPrefixSetup } from './global-prefix.setup';
 import { pipesSetup } from './pipes.setup';
 import { swaggerSetup } from './swagger.setup';
@@ -16,4 +17,6 @@ export function appSetup(app: INestApplication, coreConfig: CoreConfig) {
   swaggerSetup(app, coreConfig);
   // Setup exception filters
   exceptionFilterSetup(app, coreConfig);
+  // Add cookie parser
+  app.use(cookieParser());
 }

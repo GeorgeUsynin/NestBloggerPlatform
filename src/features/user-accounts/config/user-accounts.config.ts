@@ -42,11 +42,19 @@ export class UserAccountsConfig {
   );
 
   @IsNotEmpty({
-    message: 'Set Env variable ACCESS_TOKEN_EXPIRATION_TIME, example: 1',
+    message: 'Set Env variable ACCESS_TOKEN_EXPIRATION_TIME, example: 10m',
   })
   [ENV_VARIABLE_NAMES.ACCESS_TOKEN_EXPIRATION_TIME]: string =
     this.configService.get(
       ENV_VARIABLE_NAMES.ACCESS_TOKEN_EXPIRATION_TIME,
+    ) as string;
+
+  @IsNotEmpty({
+    message: 'Set Env variable REFRESH_TOKEN_EXPIRATION_TIME, example: 1h',
+  })
+  [ENV_VARIABLE_NAMES.REFRESH_TOKEN_EXPIRATION_TIME]: string =
+    this.configService.get(
+      ENV_VARIABLE_NAMES.REFRESH_TOKEN_EXPIRATION_TIME,
     ) as string;
 
   @IsNotEmpty({

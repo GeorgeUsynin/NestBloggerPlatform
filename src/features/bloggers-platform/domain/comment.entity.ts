@@ -3,6 +3,7 @@ import { HydratedDocument, Model, SchemaTimestampsConfig } from 'mongoose';
 import { CreateCommentDto } from './dto/create/comments.create-dto';
 import { UpdateCommentDto } from './dto/update/comments.update-dto';
 import { ForbiddenDomainException } from '../../../core/exceptions/domain-exceptions';
+import { LikeStatus } from '../types';
 
 export enum DeletionStatus {
   NotDeleted = 'not-deleted',
@@ -82,6 +83,44 @@ export class Comment {
     }
 
     return true;
+  }
+
+  updateLikesInfoCount(newLikeStatus: LikeStatus, oldLikeStatus?: LikeStatus) {
+    if (!oldLikeStatus) {
+      if (newLikeStatus === LikeStatus.Like) {
+        this.likesInfo.likesCount += 1;
+      } else if (newLikeStatus === LikeStatus.Dislike) {
+        this.likesInfo.dislikesCount += 1;
+      }
+    } else {
+      switch (oldLikeStatus) {
+        case LikeStatus.Like:
+          if (newLikeStatus === LikeStatus.Dislike) {
+            this.likesInfo.likesCount -= 1;
+            this.likesInfo.dislikesCount += 1;
+          } else if (newLikeStatus === LikeStatus.None) {
+            this.likesInfo.likesCount -= 1;
+          }
+          break;
+
+        case LikeStatus.Dislike:
+          if (newLikeStatus === LikeStatus.Like) {
+            this.likesInfo.likesCount += 1;
+            this.likesInfo.dislikesCount -= 1;
+          } else if (newLikeStatus === LikeStatus.None) {
+            this.likesInfo.dislikesCount -= 1;
+          }
+          break;
+
+        case LikeStatus.None:
+          if (newLikeStatus === LikeStatus.Like) {
+            this.likesInfo.likesCount += 1;
+          } else if (newLikeStatus === LikeStatus.Dislike) {
+            this.likesInfo.dislikesCount += 1;
+          }
+          break;
+      }
+    }
   }
 }
 

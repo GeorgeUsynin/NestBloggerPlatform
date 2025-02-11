@@ -5,9 +5,11 @@ import {
   HttpCode,
   HttpStatus,
   Post,
+  Res,
   UseGuards,
 } from '@nestjs/common';
 import { CommandBus } from '@nestjs/cqrs';
+import { Response } from 'express';
 import { ExtractUserFromRequest } from '../guards/decorators/params/ExtractUserFromRequest.decorator';
 import { UserContextDto } from '../guards/dto/user-context.dto';
 import { LocalAuthGuard } from '../guards/local/local-auth.guard';
@@ -33,6 +35,7 @@ import { ApiBearerAuth } from '@nestjs/swagger';
 import {
   ChangePasswordCommand,
   LoginCommand,
+  LoginUseCaseResponse,
   RecoverPasswordCommand,
   RegisterUserCommand,
   RegistrationConfirmationCommand,
@@ -60,13 +63,20 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   @LoginApi()
   async login(
+    @Res({ passthrough: true }) response: Response,
     @ExtractUserFromRequest() user: UserContextDto,
   ): Promise<LoginSuccessViewDto> {
-    const accessToken = await this.commandBus.execute(
-      new LoginCommand(user.id),
-    );
+    const { accessToken, refreshToken } = await this.commandBus.execute<
+      LoginCommand,
+      LoginUseCaseResponse
+    >(new LoginCommand(user.id));
 
-    return accessToken;
+    response.cookie('refreshToken', refreshToken, {
+      httpOnly: true,
+      secure: true,
+    });
+
+    return { accessToken };
   }
 
   @Post('registration')

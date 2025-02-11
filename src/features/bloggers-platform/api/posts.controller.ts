@@ -27,6 +27,8 @@ import { ObjectIdValidationPipe } from '../../../core/pipes/objectId-validation-
 import { ExtractUserFromRequest } from '../../user-accounts/guards/decorators/params/ExtractUserFromRequest.decorator';
 import { UserContextDto } from '../../user-accounts/guards/dto/user-context.dto';
 import { JwtAuthGuard } from '../../user-accounts/guards/bearer/jwt-auth.guard';
+import { JwtOptionalAuthGuard } from '../../user-accounts/guards/bearer/jwt-optional-auth.guard';
+import { ExtractUserIfExistsFromRequest } from '../../user-accounts/guards/decorators/params/ExtractUserIfExistsFromRequest.decorator';
 import {
   CreatePostApi,
   GetAllPostsApi,
@@ -68,14 +70,22 @@ export class PostsController {
     return this.postsQueryRepository.getByIdOrNotFoundFail(id);
   }
 
+  @UseGuards(JwtOptionalAuthGuard)
   @Get(':postId/comments')
   @HttpCode(HttpStatus.OK)
   @GetAllCommentsByPostIdApi()
   async getAllCommentsByPostId(
     @Query() query: GetCommentsQueryParams,
     @Param('postId', ObjectIdValidationPipe) postId: string,
+    @ExtractUserIfExistsFromRequest() user: UserContextDto | null,
   ): Promise<PaginatedViewDto<CommentViewDto[]>> {
-    return this.commentsQueryRepository.getAllCommentsByPostId(query, postId);
+    const userId = user ? user.id : null;
+
+    return this.commentsQueryRepository.getAllCommentsByPostId(
+      query,
+      postId,
+      userId,
+    );
   }
 
   @Post()
@@ -107,7 +117,10 @@ export class PostsController {
       }),
     );
 
-    return this.commentsQueryRepository.getByIdOrNotFoundFail(commentId);
+    return this.commentsQueryRepository.getByIdOrNotFoundFail(
+      commentId,
+      user.id,
+    );
   }
 
   @Put(':id')

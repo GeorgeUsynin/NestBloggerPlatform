@@ -11,8 +11,10 @@ import { CommentsController } from './api/comments.controller';
 import { CommentsQueryRepository } from './infrastructure/comments.query-repository';
 import { Post, PostSchema } from './domain/post.entity';
 import { Comment, CommentSchema } from './domain/comment.entity';
+import { LikeSchema, Like } from './domain/like.entity';
 import { PostsRepository } from './infrastructure/posts.repository';
 import { CommentsRepository } from './infrastructure/comments.repository';
+import { LikesRepository } from './infrastructure/likes.repository';
 import {
   CreateBlogUseCase,
   CreatePostUseCase,
@@ -23,7 +25,17 @@ import {
   UpdateCommentUseCase,
   DeleteCommentUseCase,
   CreateCommentUseCase,
+  UpdateLikeCommentStatusUseCase,
 } from './application/use-cases';
+
+const mongooseModels = [
+  { name: Blog.name, schema: BlogSchema },
+  { name: Post.name, schema: PostSchema },
+  { name: Comment.name, schema: CommentSchema },
+  { name: Like.name, schema: LikeSchema },
+];
+
+const controllers = [BlogsController, PostsController, CommentsController];
 
 const useCases = [
   CreateBlogUseCase,
@@ -35,8 +47,14 @@ const useCases = [
   CreateCommentUseCase,
   UpdateCommentUseCase,
   DeleteCommentUseCase,
+  UpdateLikeCommentStatusUseCase,
 ];
-const repositories = [BlogsRepository, PostsRepository, CommentsRepository];
+const repositories = [
+  BlogsRepository,
+  PostsRepository,
+  CommentsRepository,
+  LikesRepository,
+];
 const queryRepositories = [
   BlogsQueryRepository,
   PostsQueryRepository,
@@ -45,15 +63,8 @@ const queryRepositories = [
 
 @Module({
   // This will allow injecting models into the providers in this module
-  imports: [
-    MongooseModule.forFeature([
-      { name: Blog.name, schema: BlogSchema },
-      { name: Post.name, schema: PostSchema },
-      { name: Comment.name, schema: CommentSchema },
-    ]),
-    UsersAccountsModule,
-  ],
-  controllers: [BlogsController, PostsController, CommentsController],
+  imports: [MongooseModule.forFeature(mongooseModels), UsersAccountsModule],
+  controllers: [...controllers],
   providers: [...repositories, ...queryRepositories, ...useCases],
   exports: [MongooseModule],
   /* We re-export the MongooseModule if we want the models registered here to be injectable 

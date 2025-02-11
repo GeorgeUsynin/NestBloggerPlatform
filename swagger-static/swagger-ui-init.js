@@ -1430,6 +1430,44 @@ window.onload = function() {
             "Comments"
           ]
         }
+      },
+      "/comments/{id}/like-status": {
+        "put": {
+          "operationId": "CommentsController_updateLikeCommentById",
+          "parameters": [
+            {
+              "name": "id",
+              "required": true,
+              "in": "path",
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdateLikeInputDto"
+                }
+              }
+            }
+          },
+          "responses": {
+            "204": {
+              "description": ""
+            }
+          },
+          "security": [
+            {
+              "bearer": []
+            }
+          ],
+          "tags": [
+            "Comments"
+          ]
+        }
       }
     },
     "info": {
@@ -2006,6 +2044,22 @@ window.onload = function() {
           },
           "required": [
             "content"
+          ]
+        },
+        "UpdateLikeInputDto": {
+          "type": "object",
+          "properties": {
+            "likeStatus": {
+              "type": "string",
+              "enum": [
+                "None",
+                "Like",
+                "Dislike"
+              ]
+            }
+          },
+          "required": [
+            "likeStatus"
           ]
         }
       }
