@@ -678,6 +678,11 @@ window.onload = function() {
               "description": "Unauthorized"
             }
           },
+          "security": [
+            {
+              "basic": []
+            }
+          ],
           "summary": "Create new blog",
           "tags": [
             "Blogs"
@@ -763,6 +768,11 @@ window.onload = function() {
               "description": "Not Found"
             }
           },
+          "security": [
+            {
+              "basic": []
+            }
+          ],
           "summary": "Update existing Blog by id with InputModel",
           "tags": [
             "Blogs"
@@ -792,6 +802,11 @@ window.onload = function() {
               "description": "Not Found"
             }
           },
+          "security": [
+            {
+              "basic": []
+            }
+          ],
           "summary": "Delete blog specified by id",
           "tags": [
             "Blogs"
@@ -842,6 +857,7 @@ window.onload = function() {
               "required": false,
               "in": "query",
               "schema": {
+                "default": "createdAt",
                 "type": "string",
                 "enum": [
                   "createdAt",
@@ -946,6 +962,11 @@ window.onload = function() {
               "description": "If specified blog doesn't exists"
             }
           },
+          "security": [
+            {
+              "basic": []
+            }
+          ],
           "summary": "Create new post for specific blog",
           "tags": [
             "Blogs"
@@ -996,6 +1017,7 @@ window.onload = function() {
               "required": false,
               "in": "query",
               "schema": {
+                "default": "createdAt",
                 "type": "string",
                 "enum": [
                   "createdAt",
@@ -1075,6 +1097,11 @@ window.onload = function() {
               "description": "Unauthorized"
             }
           },
+          "security": [
+            {
+              "basic": []
+            }
+          ],
           "summary": "Create new post",
           "tags": [
             "Posts"
@@ -1160,6 +1187,11 @@ window.onload = function() {
               "description": "Not Found"
             }
           },
+          "security": [
+            {
+              "basic": []
+            }
+          ],
           "summary": "Update existing post by id with InputModel",
           "tags": [
             "Posts"
@@ -1189,6 +1221,11 @@ window.onload = function() {
               "description": "Not Found"
             }
           },
+          "security": [
+            {
+              "basic": []
+            }
+          ],
           "summary": "Delete post specified by id",
           "tags": [
             "Posts"
@@ -1322,6 +1359,44 @@ window.onload = function() {
                   }
                 }
               }
+            }
+          },
+          "security": [
+            {
+              "bearer": []
+            }
+          ],
+          "tags": [
+            "Posts"
+          ]
+        }
+      },
+      "/posts/{id}/like-status": {
+        "put": {
+          "operationId": "PostsController_updateLikePostById",
+          "parameters": [
+            {
+              "name": "id",
+              "required": true,
+              "in": "path",
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdateLikeInputDto"
+                }
+              }
+            }
+          },
+          "responses": {
+            "204": {
+              "description": ""
             }
           },
           "security": [
@@ -2035,6 +2110,22 @@ window.onload = function() {
             "blogId"
           ]
         },
+        "UpdateLikeInputDto": {
+          "type": "object",
+          "properties": {
+            "likeStatus": {
+              "enum": [
+                "None",
+                "Like",
+                "Dislike"
+              ],
+              "type": "string"
+            }
+          },
+          "required": [
+            "likeStatus"
+          ]
+        },
         "UpdateCommentInputDto": {
           "type": "object",
           "properties": {
@@ -2044,22 +2135,6 @@ window.onload = function() {
           },
           "required": [
             "content"
-          ]
-        },
-        "UpdateLikeInputDto": {
-          "type": "object",
-          "properties": {
-            "likeStatus": {
-              "type": "string",
-              "enum": [
-                "None",
-                "Like",
-                "Dislike"
-              ]
-            }
-          },
-          "required": [
-            "likeStatus"
           ]
         }
       }

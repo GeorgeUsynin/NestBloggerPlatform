@@ -26,6 +26,7 @@ import {
   DeleteCommentUseCase,
   CreateCommentUseCase,
   UpdateLikeCommentStatusUseCase,
+  UpdateLikePostStatusUseCase,
 } from './application/use-cases';
 
 const mongooseModels = [
@@ -48,6 +49,7 @@ const useCases = [
   UpdateCommentUseCase,
   DeleteCommentUseCase,
   UpdateLikeCommentStatusUseCase,
+  UpdateLikePostStatusUseCase,
 ];
 const repositories = [
   BlogsRepository,

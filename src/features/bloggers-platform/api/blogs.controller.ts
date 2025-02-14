@@ -9,6 +9,7 @@ import {
   Post,
   Put,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import { CommandBus } from '@nestjs/cqrs';
 import { GetBlogsQueryParams } from './dto/query-params-dto/get-blogs-query-params.input-dto';
@@ -20,7 +21,10 @@ import { UpdateBlogInputDto } from './dto/input-dto/update/blogs.input-dto';
 import { CreatePostInputDto } from './dto/input-dto/create/posts.input-dto';
 import { PostViewDto } from './dto/view-dto/posts.view-dto';
 import { PostsQueryRepository } from '../infrastructure/posts.query-repository';
-import { GetPostsQueryParams } from './dto/query-params-dto/get-posts-query-params.input-dto copy';
+import { GetPostsQueryParams } from './dto/query-params-dto/get-posts-query-params.input-dto';
+import { JwtOptionalAuthGuard } from '../../user-accounts/guards/bearer/jwt-optional-auth.guard';
+import { ExtractUserIfExistsFromRequest } from '../../user-accounts/guards/decorators/params/ExtractUserIfExistsFromRequest.decorator';
+import { UserContextDto } from '../../user-accounts/guards/dto/user-context.dto';
 import {
   GetAllBlogsApi,
   GetBlogApi,
@@ -31,12 +35,14 @@ import {
   DeleteBlogApi,
 } from './swagger';
 import { ObjectIdValidationPipe } from '../../../core/pipes/objectId-validation-pipe';
+import { BasicAuthGuard } from '../../user-accounts/guards/basic/basic-auth.guard';
 import {
   CreateBlogCommand,
   DeleteBlogCommand,
   UpdateBlogCommand,
   CreatePostCommand,
 } from '../application/use-cases';
+import { ApiBasicAuth } from '@nestjs/swagger';
 
 @Controller('blogs')
 export class BlogsController {
@@ -64,16 +70,22 @@ export class BlogsController {
     return this.blogsQueryRepository.getByIdOrNotFoundFail(id);
   }
 
+  @UseGuards(JwtOptionalAuthGuard)
   @Get(':blogId/posts')
   @HttpCode(HttpStatus.OK)
   @GetAllPostsByBlogIdApi()
   async getAllPostsByBlogId(
     @Query() query: GetPostsQueryParams,
     @Param('blogId', ObjectIdValidationPipe) blogId: string,
+    @ExtractUserIfExistsFromRequest() user: UserContextDto | null,
   ): Promise<PaginatedViewDto<PostViewDto[]>> {
-    return this.postsQueryRepository.getAllPostsByBlogId(query, blogId);
+    const userId = user ? user.id : null;
+
+    return this.postsQueryRepository.getAllPostsByBlogId(query, userId, blogId);
   }
 
+  @ApiBasicAuth()
+  @UseGuards(BasicAuthGuard)
   @Post()
   @HttpCode(HttpStatus.CREATED)
   @CreateBlogApi()
@@ -85,13 +97,18 @@ export class BlogsController {
     return this.blogsQueryRepository.getByIdOrNotFoundFail(blogId);
   }
 
+  @ApiBasicAuth()
+  @UseGuards(JwtOptionalAuthGuard, BasicAuthGuard)
   @Post(':blogId/posts')
   @HttpCode(HttpStatus.CREATED)
   @CreatePostByBlogIdApi()
   async createPostByBlogID(
     @Param('blogId', ObjectIdValidationPipe) blogId: string,
     @Body() payload: Omit<CreatePostInputDto, 'blogId'>,
+    @ExtractUserIfExistsFromRequest() user: UserContextDto | null,
   ): Promise<PostViewDto> {
+    const userId = user ? user.id : null;
+
     const postId = await this.commandBus.execute(
       new CreatePostCommand({
         ...payload,
@@ -99,9 +116,11 @@ export class BlogsController {
       }),
     );
 
-    return this.postsQueryRepository.getByIdOrNotFoundFail(postId);
+    return this.postsQueryRepository.getByIdOrNotFoundFail(postId, userId);
   }
 
+  @ApiBasicAuth()
+  @UseGuards(BasicAuthGuard)
   @Put(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   @UpdateBlogApi()
@@ -112,6 +131,8 @@ export class BlogsController {
     return this.commandBus.execute(new UpdateBlogCommand(id, payload));
   }
 
+  @ApiBasicAuth()
+  @UseGuards(BasicAuthGuard)
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   @DeleteBlogApi()

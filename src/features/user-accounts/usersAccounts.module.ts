@@ -81,7 +81,7 @@ const services = [AuthService, CryptoService, RegistrationService];
     ...strategies,
     ...useCases,
   ],
-  exports: [MongooseModule, UsersRepository],
+  exports: [MongooseModule, UsersRepository, UserAccountsConfig],
   /* We re-export the MongooseModule if we want the models registered here to be injectable 
   into the services of other modules that import this module */
 })
