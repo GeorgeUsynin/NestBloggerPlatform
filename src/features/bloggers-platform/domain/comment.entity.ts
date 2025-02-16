@@ -3,7 +3,7 @@ import { HydratedDocument, Model, SchemaTimestampsConfig } from 'mongoose';
 import { CreateCommentDto } from './dto/create/comments.create-dto';
 import { UpdateCommentDto } from './dto/update/comments.update-dto';
 import { ForbiddenDomainException } from '../../../core/exceptions/domain-exceptions';
-import { LikeStatus } from '../types';
+import { Likeable } from './shared.entity';
 
 export enum DeletionStatus {
   NotDeleted = 'not-deleted',
@@ -17,7 +17,7 @@ export const contentConstraints = {
 
 // The timestamp flag automatically adds the updatedAt and createdAt fields
 @Schema({ timestamps: true })
-export class Comment {
+export class Comment extends Likeable {
   @Prop({ type: String, required: true, ...contentConstraints })
   content: string;
 
@@ -36,19 +36,6 @@ export class Comment {
 
   @Prop({ type: String, required: true })
   postId: string;
-
-  @Prop({
-    type: {
-      dislikesCount: Number,
-      likesCount: Number,
-    },
-    default: { dislikesCount: 0, likesCount: 0 }, // Set default object
-    _id: false,
-  })
-  likesInfo: {
-    dislikesCount: number;
-    likesCount: number;
-  };
 
   @Prop({ enum: DeletionStatus, default: DeletionStatus.NotDeleted })
   deletionStatus: DeletionStatus;
@@ -83,44 +70,6 @@ export class Comment {
     }
 
     return true;
-  }
-
-  updateLikesInfoCount(newLikeStatus: LikeStatus, oldLikeStatus?: LikeStatus) {
-    if (!oldLikeStatus) {
-      if (newLikeStatus === LikeStatus.Like) {
-        this.likesInfo.likesCount += 1;
-      } else if (newLikeStatus === LikeStatus.Dislike) {
-        this.likesInfo.dislikesCount += 1;
-      }
-    } else {
-      switch (oldLikeStatus) {
-        case LikeStatus.Like:
-          if (newLikeStatus === LikeStatus.Dislike) {
-            this.likesInfo.likesCount -= 1;
-            this.likesInfo.dislikesCount += 1;
-          } else if (newLikeStatus === LikeStatus.None) {
-            this.likesInfo.likesCount -= 1;
-          }
-          break;
-
-        case LikeStatus.Dislike:
-          if (newLikeStatus === LikeStatus.Like) {
-            this.likesInfo.likesCount += 1;
-            this.likesInfo.dislikesCount -= 1;
-          } else if (newLikeStatus === LikeStatus.None) {
-            this.likesInfo.dislikesCount -= 1;
-          }
-          break;
-
-        case LikeStatus.None:
-          if (newLikeStatus === LikeStatus.Like) {
-            this.likesInfo.likesCount += 1;
-          } else if (newLikeStatus === LikeStatus.Dislike) {
-            this.likesInfo.dislikesCount += 1;
-          }
-          break;
-      }
-    }
   }
 }
 
