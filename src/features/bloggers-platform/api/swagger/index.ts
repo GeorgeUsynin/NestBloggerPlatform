@@ -12,3 +12,8 @@ export * from './update-post.decorator';
 export * from './delete-post.decorator';
 export * from './get-all-comments-by-postId';
 export * from './get-comment.decorator';
+export * from './update-comment.decorator';
+export * from './update-comment-like-status.decorator';
+export * from './delete-comment.decorator';
+export * from './update-post-like-status.decorator';
+export * from './create-comment-by-postid.decorator';

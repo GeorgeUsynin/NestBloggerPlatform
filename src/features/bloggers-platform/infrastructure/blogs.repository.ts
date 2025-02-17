@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import {
   Blog,
   BlogDocument,
@@ -6,6 +6,7 @@ import {
   DeletionStatus,
 } from '../domain/blog.entity';
 import { InjectModel } from '@nestjs/mongoose';
+import { NotFoundDomainException } from '../../../core/exceptions/domain-exceptions';
 
 @Injectable()
 export class BlogsRepository {
@@ -21,8 +22,7 @@ export class BlogsRepository {
     });
 
     if (!blog) {
-      //TODO: replace with domain exception
-      throw new NotFoundException('Blog not found');
+      throw NotFoundDomainException.create('Blog not found');
     }
     return blog;
   }

@@ -14,19 +14,24 @@ import { ApiBearerAuth } from '@nestjs/swagger';
 import { CommentsQueryRepository } from '../infrastructure/comments.query-repository';
 import { ObjectIdValidationPipe } from '../../../core/pipes/objectId-validation-pipe';
 import { CommentViewDto } from './dto/view-dto/comments.view-dto';
-import { GetCommentApi } from './swagger';
+import {
+  DeleteCommentApi,
+  GetCommentApi,
+  UpdateCommentApi,
+  UpdateCommentLikeStatusApi,
+} from './swagger';
 import { JwtAuthGuard } from '../../user-accounts/guards/bearer/jwt-auth.guard';
 import { JwtOptionalAuthGuard } from '../../user-accounts/guards/bearer/jwt-optional-auth.guard';
 import { ExtractUserFromRequest } from '../../user-accounts/guards/decorators/params/ExtractUserFromRequest.decorator';
 import { ExtractUserIfExistsFromRequest } from '../../user-accounts/guards/decorators/params/ExtractUserIfExistsFromRequest.decorator';
 import { UserContextDto } from '../../user-accounts/guards/dto/user-context.dto';
 import { UpdateCommentInputDto } from './dto/input-dto/update/comments.input-dto';
+import { UpdateLikeInputDto } from './dto/input-dto/update/likes.input-dto';
 import {
   DeleteCommentCommand,
   UpdateCommentCommand,
   UpdateLikeCommentStatusCommand,
 } from '../application/use-cases';
-import { UpdateLikeInputDto } from './dto/input-dto/update/likes.input-dto';
 
 @Controller('comments')
 export class CommentsController {
@@ -52,7 +57,7 @@ export class CommentsController {
   @UseGuards(JwtAuthGuard)
   @Put(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  // TODO: add swagger
+  @UpdateCommentApi()
   async updateCommentById(
     @Param('id', ObjectIdValidationPipe) commentId: string,
     @Body() payload: UpdateCommentInputDto,
@@ -67,7 +72,7 @@ export class CommentsController {
   @UseGuards(JwtAuthGuard)
   @Put(':id/like-status')
   @HttpCode(HttpStatus.NO_CONTENT)
-  // TODO: add swagger
+  @UpdateCommentLikeStatusApi()
   async updateLikeCommentById(
     @Param('id', ObjectIdValidationPipe) commentId: string,
     @Body() payload: UpdateLikeInputDto,
@@ -82,7 +87,7 @@ export class CommentsController {
   @UseGuards(JwtAuthGuard)
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  // TODO: add swagger
+  @DeleteCommentApi()
   async deleteCommentById(
     @Param('id', ObjectIdValidationPipe) commentId: string,
     @ExtractUserFromRequest() user: UserContextDto,

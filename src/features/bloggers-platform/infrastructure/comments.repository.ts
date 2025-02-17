@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import {
   Comment,
@@ -6,6 +6,7 @@ import {
   CommentModelType,
   DeletionStatus,
 } from '../domain/comment.entity';
+import { NotFoundDomainException } from 'src/core/exceptions/domain-exceptions';
 
 @Injectable()
 export class CommentsRepository {
@@ -21,8 +22,7 @@ export class CommentsRepository {
     });
 
     if (!comment) {
-      //TODO: replace with domain exception
-      throw new NotFoundException('Comment not found');
+      throw NotFoundDomainException.create('Comment not found');
     }
     return comment;
   }

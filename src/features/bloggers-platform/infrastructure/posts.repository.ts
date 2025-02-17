@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import {
   DeletionStatus,
   Post,
@@ -6,6 +6,7 @@ import {
   PostModelType,
 } from '../domain/post.entity';
 import { InjectModel } from '@nestjs/mongoose';
+import { NotFoundDomainException } from 'src/core/exceptions/domain-exceptions';
 
 @Injectable()
 export class PostsRepository {
@@ -20,8 +21,7 @@ export class PostsRepository {
       deletionStatus: { $ne: DeletionStatus.PermanentDeleted },
     });
     if (!post) {
-      //TODO: replace with domain exception
-      throw new NotFoundException('Post not found');
+      throw NotFoundDomainException.create('Post not found');
     }
     return post;
   }

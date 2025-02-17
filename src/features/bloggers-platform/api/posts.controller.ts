@@ -38,6 +38,8 @@ import {
   UpdatePostApi,
   DeletePostApi,
   GetAllCommentsByPostIdApi,
+  UpdatePostLikeStatusApi,
+  CreateCommentByPostIdApi,
 } from './swagger';
 import {
   CreatePostCommand,
@@ -121,7 +123,7 @@ export class PostsController {
   @UseGuards(JwtAuthGuard)
   @Post(':postId/comments')
   @HttpCode(HttpStatus.CREATED)
-  // TODO: add swagger
+  @CreateCommentByPostIdApi()
   async createCommentByPostId(
     @Param('postId', ObjectIdValidationPipe) postId: string,
     @Body() payload: CreateCommentInputDto,
@@ -157,7 +159,7 @@ export class PostsController {
   @UseGuards(JwtAuthGuard)
   @Put(':id/like-status')
   @HttpCode(HttpStatus.NO_CONTENT)
-  // TODO: add swagger
+  @UpdatePostLikeStatusApi()
   async updateLikePostById(
     @Param('id', ObjectIdValidationPipe) postId: string,
     @Body() payload: UpdateLikeInputDto,

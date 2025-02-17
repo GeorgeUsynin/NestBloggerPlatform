@@ -1334,24 +1334,26 @@ window.onload = function() {
               "name": "postId",
               "required": true,
               "in": "path",
+              "description": "Post id",
               "schema": {
                 "type": "string"
               }
             }
           ],
           "requestBody": {
-            "required": true,
+            "required": false,
+            "description": "Data for constructing new comment entity",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/CreateCommentInputDto"
+                  "$ref": "#/components/schemas/SwaggerCreateCommentInputDto"
                 }
               }
             }
           },
           "responses": {
             "201": {
-              "description": "",
+              "description": "Returns the newly created comment",
               "content": {
                 "application/json": {
                   "schema": {
@@ -1359,6 +1361,22 @@ window.onload = function() {
                   }
                 }
               }
+            },
+            "400": {
+              "description": "If the inputModel has incorrect values",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/SwaggerErrorsMessagesViewDto"
+                  }
+                }
+              }
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "404": {
+              "description": "If specified post doesn't exists"
             }
           },
           "security": [
@@ -1366,6 +1384,7 @@ window.onload = function() {
               "bearer": []
             }
           ],
+          "summary": "Create new comment for specified post",
           "tags": [
             "Posts"
           ]
@@ -1379,24 +1398,42 @@ window.onload = function() {
               "name": "id",
               "required": true,
               "in": "path",
+              "description": "Post id",
               "schema": {
                 "type": "string"
               }
             }
           ],
           "requestBody": {
-            "required": true,
+            "required": false,
+            "description": "Like model for make like/dislike/reset operation",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/UpdateLikeInputDto"
+                  "$ref": "#/components/schemas/SwaggerUpdatePostLikeStatusInputDto"
                 }
               }
             }
           },
           "responses": {
             "204": {
-              "description": ""
+              "description": "No Content"
+            },
+            "400": {
+              "description": "If the inputModel has incorrect values",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/SwaggerErrorsMessagesViewDto"
+                  }
+                }
+              }
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "404": {
+              "description": "If post with specified postId doesn't exists"
             }
           },
           "security": [
@@ -1404,6 +1441,7 @@ window.onload = function() {
               "bearer": []
             }
           ],
+          "summary": "Make like/unlike/dislike/undislike operation",
           "tags": [
             "Posts"
           ]
@@ -1450,24 +1488,45 @@ window.onload = function() {
               "name": "id",
               "required": true,
               "in": "path",
+              "description": "Comment id",
               "schema": {
                 "type": "string"
               }
             }
           ],
           "requestBody": {
-            "required": true,
+            "required": false,
+            "description": "Data for updating",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/UpdateCommentInputDto"
+                  "$ref": "#/components/schemas/SwaggerUpdateCommentInputDto"
                 }
               }
             }
           },
           "responses": {
             "204": {
-              "description": ""
+              "description": "No Content"
+            },
+            "400": {
+              "description": "If the inputModel has incorrect values",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/SwaggerErrorsMessagesViewDto"
+                  }
+                }
+              }
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "403": {
+              "description": "If try edit the comment that is not your own"
+            },
+            "404": {
+              "description": "Not Found"
             }
           },
           "security": [
@@ -1475,6 +1534,7 @@ window.onload = function() {
               "bearer": []
             }
           ],
+          "summary": "Update existing comment by id with InputModel",
           "tags": [
             "Comments"
           ]
@@ -1486,6 +1546,7 @@ window.onload = function() {
               "name": "id",
               "required": true,
               "in": "path",
+              "description": "Comment id",
               "schema": {
                 "type": "string"
               }
@@ -1493,7 +1554,16 @@ window.onload = function() {
           ],
           "responses": {
             "204": {
-              "description": ""
+              "description": "No Content"
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "403": {
+              "description": "If try delete the comment that is not your own"
+            },
+            "404": {
+              "description": "Not Found"
             }
           },
           "security": [
@@ -1501,6 +1571,7 @@ window.onload = function() {
               "bearer": []
             }
           ],
+          "summary": "Delete comment specified by id",
           "tags": [
             "Comments"
           ]
@@ -1514,24 +1585,42 @@ window.onload = function() {
               "name": "id",
               "required": true,
               "in": "path",
+              "description": "Comment id",
               "schema": {
                 "type": "string"
               }
             }
           ],
           "requestBody": {
-            "required": true,
+            "required": false,
+            "description": "Like model for make like/dislike/reset operation",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/UpdateLikeInputDto"
+                  "$ref": "#/components/schemas/SwaggerUpdateCommentLikeStatusInputDto"
                 }
               }
             }
           },
           "responses": {
             "204": {
-              "description": ""
+              "description": "No Content"
+            },
+            "400": {
+              "description": "If the inputModel has incorrect values",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/SwaggerErrorsMessagesViewDto"
+                  }
+                }
+              }
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "404": {
+              "description": "If comment with specified id doesn't exists"
             }
           },
           "security": [
@@ -1539,6 +1628,7 @@ window.onload = function() {
               "bearer": []
             }
           ],
+          "summary": "Make like/unlike/dislike/undislike operation",
           "tags": [
             "Comments"
           ]
@@ -2073,11 +2163,13 @@ window.onload = function() {
             "blogId"
           ]
         },
-        "CreateCommentInputDto": {
+        "SwaggerCreateCommentInputDto": {
           "type": "object",
           "properties": {
             "content": {
-              "type": "string"
+              "type": "string",
+              "minLength": 20,
+              "maxLength": 300
             }
           },
           "required": [
@@ -2110,31 +2202,51 @@ window.onload = function() {
             "blogId"
           ]
         },
-        "UpdateLikeInputDto": {
+        "SwaggerUpdatePostLikeStatusInputDto": {
           "type": "object",
           "properties": {
             "likeStatus": {
+              "type": "string",
               "enum": [
                 "None",
                 "Like",
                 "Dislike"
               ],
-              "type": "string"
+              "description": "Send None if you want to unlike|undislike"
             }
           },
           "required": [
             "likeStatus"
           ]
         },
-        "UpdateCommentInputDto": {
+        "SwaggerUpdateCommentInputDto": {
           "type": "object",
           "properties": {
             "content": {
-              "type": "string"
+              "type": "string",
+              "minLength": 20,
+              "maxLength": 300
             }
           },
           "required": [
             "content"
+          ]
+        },
+        "SwaggerUpdateCommentLikeStatusInputDto": {
+          "type": "object",
+          "properties": {
+            "likeStatus": {
+              "type": "string",
+              "enum": [
+                "None",
+                "Like",
+                "Dislike"
+              ],
+              "description": "Send None if you want to unlike|undislike"
+            }
+          },
+          "required": [
+            "likeStatus"
           ]
         }
       }

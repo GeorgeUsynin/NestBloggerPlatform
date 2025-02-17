@@ -16,8 +16,6 @@ export class AllExceptionsFilter extends BaseExceptionFilter {
         ? exception.getStatus()
         : HttpStatus.INTERNAL_SERVER_ERROR;
 
-    //TODO: Replace with getter from configService. will be in the following lessons
-
     const isProduction = this.coreConfig.NODE_ENV === 'production';
 
     if (isProduction && status === HttpStatus.INTERNAL_SERVER_ERROR) {
