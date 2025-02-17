@@ -5,6 +5,7 @@ import { pipesSetup } from './pipes.setup';
 import { swaggerSetup } from './swagger.setup';
 import { exceptionFilterSetup } from './exception-filter.setup';
 import { CoreConfig } from '../core/config';
+import { validationConstraintSetup } from './validation-constraint.setup';
 
 export function appSetup(app: INestApplication, coreConfig: CoreConfig) {
   // Enable CORS
@@ -19,4 +20,6 @@ export function appSetup(app: INestApplication, coreConfig: CoreConfig) {
   exceptionFilterSetup(app, coreConfig);
   // Add cookie parser
   app.use(cookieParser());
+  // Setup validation constraints DI
+  validationConstraintSetup(app, coreConfig);
 }

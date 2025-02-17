@@ -15,6 +15,7 @@ import { LikeSchema, Like } from './domain/like.entity';
 import { PostsRepository } from './infrastructure/posts.repository';
 import { CommentsRepository } from './infrastructure/comments.repository';
 import { LikesRepository } from './infrastructure/likes.repository';
+import { BlogIsExistConstraint } from './api/validate/blog-is-exist.decorator';
 import {
   CreateBlogUseCase,
   CreatePostUseCase,
@@ -67,7 +68,12 @@ const queryRepositories = [
   // This will allow injecting models into the providers in this module
   imports: [MongooseModule.forFeature(mongooseModels), UsersAccountsModule],
   controllers: [...controllers],
-  providers: [...repositories, ...queryRepositories, ...useCases],
+  providers: [
+    ...repositories,
+    ...queryRepositories,
+    ...useCases,
+    BlogIsExistConstraint,
+  ],
   exports: [MongooseModule],
   /* We re-export the MongooseModule if we want the models registered here to be injectable 
   into the services of other modules that import this module */
