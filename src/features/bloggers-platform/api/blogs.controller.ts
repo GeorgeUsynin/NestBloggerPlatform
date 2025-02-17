@@ -18,7 +18,7 @@ import { BlogViewDto } from './dto/view-dto/blogs.view-dto';
 import { BlogsQueryRepository } from '../infrastructure/blogs.query-repository';
 import { CreateBlogInputDto } from './dto/input-dto/create/blogs.input-dto';
 import { UpdateBlogInputDto } from './dto/input-dto/update/blogs.input-dto';
-import { CreatePostInputDto } from './dto/input-dto/create/posts.input-dto';
+import { CreatePostInputDtoWithoutBlogId } from './dto/input-dto/create/posts.input-dto';
 import { PostViewDto } from './dto/view-dto/posts.view-dto';
 import { PostsQueryRepository } from '../infrastructure/posts.query-repository';
 import { GetPostsQueryParams } from './dto/query-params-dto/get-posts-query-params.input-dto';
@@ -104,7 +104,7 @@ export class BlogsController {
   @CreatePostByBlogIdApi()
   async createPostByBlogID(
     @Param('blogId', ObjectIdValidationPipe) blogId: string,
-    @Body() payload: Omit<CreatePostInputDto, 'blogId'>,
+    @Body() payload: CreatePostInputDtoWithoutBlogId,
     @ExtractUserIfExistsFromRequest() user: UserContextDto | null,
   ): Promise<PostViewDto> {
     const userId = user ? user.id : null;

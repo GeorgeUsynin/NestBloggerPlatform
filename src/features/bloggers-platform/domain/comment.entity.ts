@@ -12,7 +12,7 @@ export enum DeletionStatus {
 
 export const contentConstraints = {
   minLength: 20,
-  maxLength: 1000,
+  maxLength: 300,
 };
 
 // The timestamp flag automatically adds the updatedAt and createdAt fields

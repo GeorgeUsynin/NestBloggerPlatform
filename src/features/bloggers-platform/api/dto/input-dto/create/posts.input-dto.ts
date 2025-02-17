@@ -1,3 +1,4 @@
+import { OmitType } from '@nestjs/swagger';
 import {
   contentConstraints,
   shortDescriptionConstraints,
@@ -8,6 +9,7 @@ import {
   IsStringWithTrim,
 } from '../../../../../../core/decorators/validation';
 import { CreatePostDto } from '../../../../application/dto/create/posts.create-dto';
+import { BlogIsExist } from '../../../validate/blog-is-exist.decorator';
 
 export class CreatePostInputDto implements CreatePostDto {
   @MaxLengthWithMessage(titleConstraints.maxLength)
@@ -23,6 +25,12 @@ export class CreatePostInputDto implements CreatePostDto {
   content: string;
 
   // TODO: Create custom blogId validator: https://github.com/typestack/class-validator?tab=readme-ov-file#custom-validation-decorators
+  @BlogIsExist()
   @IsStringWithTrim()
   blogId: string;
 }
+
+export class CreatePostInputDtoWithoutBlogId extends OmitType(
+  CreatePostInputDto,
+  ['blogId'] as const,
+) {}
