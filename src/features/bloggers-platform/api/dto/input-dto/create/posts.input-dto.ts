@@ -24,7 +24,7 @@ export class CreatePostInputDto implements CreatePostDto {
   @IsStringWithTrim()
   content: string;
 
-  // TODO: Create custom blogId validator: https://github.com/typestack/class-validator?tab=readme-ov-file#custom-validation-decorators
+  // https://github.com/typestack/class-validator?tab=readme-ov-file#custom-validation-decorators
   @BlogIsExist()
   @IsStringWithTrim()
   blogId: string;

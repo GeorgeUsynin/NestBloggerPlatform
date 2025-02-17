@@ -4,6 +4,7 @@ import {
   shortDescriptionConstraints,
   titleConstraints,
 } from '../../../../domain/post.entity';
+import { BlogIsExist } from '../../../validate/blog-is-exist.decorator';
 import {
   MaxLengthWithMessage,
   IsStringWithTrim,
@@ -22,7 +23,8 @@ export class UpdatePostInputDto implements UpdatePostDto {
   @IsStringWithTrim()
   content: string;
 
-  // TODO: Create custom blogId validator: https://github.com/typestack/class-validator?tab=readme-ov-file#custom-validation-decorators
+  // https://github.com/typestack/class-validator?tab=readme-ov-file#custom-validation-decorators
+  @BlogIsExist()
   @IsStringWithTrim()
   blogId: string;
 }

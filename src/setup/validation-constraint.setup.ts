@@ -4,7 +4,7 @@ import { AppModule } from '../app.module';
 import { CoreConfig } from '../core/config';
 
 /**
- * Для внедрения зависимостей в validator constraint decorator
+ * For dependency injection in validator constraint decorator
  * @param app
  * @param coreConfig
  */
@@ -12,8 +12,8 @@ export const validationConstraintSetup = async (
   app: INestApplication,
   coreConfig: CoreConfig,
 ) => {
-  // {fallbackOnErrors: true} требуется, поскольку Nest генерирует исключение,
-  // когда DI не имеет необходимого класса.
+  // {fallbackOnErrors: true} is required because Nest generates an exception
+  // when DI doesn't have the required class.
   const appContext = app.select(await AppModule.forRoot(coreConfig));
 
   useContainer(appContext, {

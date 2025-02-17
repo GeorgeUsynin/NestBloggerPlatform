@@ -8,18 +8,18 @@ import {
 } from 'class-validator';
 import { BlogsRepository } from '../../infrastructure/blogs.repository';
 
-// Обязательна регистрация в ioc
-// Внимание! Используем такой подход только в исключительных случаях.
-// Данный пример служит для демонстрации.
-// Такую проверку делаем в BLL.
-// В домашнем задании этот способ применим при создании поста,
-// когда blogId передается в body. Для формирования общего массива ошибок.
+/**
+ * Registration in IoC container is required
+ * Warning! Use this approach only in exceptional cases.
+ * This example is for demonstration purposes.
+ * Such validation should be done in BLL.
+ */
 
 @ValidatorConstraint({ name: 'BlogIsExist', async: true })
 @Injectable()
 export class BlogIsExistConstraint implements ValidatorConstraintInterface {
   constructor(private readonly blogsRepository: BlogsRepository) {}
-  async validate(value: any, args: ValidationArguments) {
+  async validate(value: any) {
     const blogIsExist = await this.blogsRepository.findBlogById(value);
     return Boolean(blogIsExist);
   }
