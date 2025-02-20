@@ -28,7 +28,7 @@ import { ObjectIdValidationPipe } from '../../../core/pipes/objectId-validation-
 import { ExtractUserFromRequest } from '../../user-accounts/guards/decorators/params/ExtractUserFromRequest.decorator';
 import { BasicAuthGuard } from '../../user-accounts/guards/basic/basic-auth.guard';
 import { UserContextDto } from '../../user-accounts/guards/dto/user-context.dto';
-import { JwtAuthGuard } from '../../user-accounts/guards/bearer/jwt-auth.guard';
+import { JwtHeaderAuthGuard } from '../../user-accounts/guards/bearer/jwt-header-auth.guard';
 import { JwtOptionalAuthGuard } from '../../user-accounts/guards/bearer/jwt-optional-auth.guard';
 import { ExtractUserIfExistsFromRequest } from '../../user-accounts/guards/decorators/params/ExtractUserIfExistsFromRequest.decorator';
 import {
@@ -120,7 +120,7 @@ export class PostsController {
   }
 
   @ApiBearerAuth()
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtHeaderAuthGuard)
   @Post(':postId/comments')
   @HttpCode(HttpStatus.CREATED)
   @CreateCommentByPostIdApi()
@@ -156,7 +156,7 @@ export class PostsController {
   }
 
   @ApiBearerAuth()
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtHeaderAuthGuard)
   @Put(':id/like-status')
   @HttpCode(HttpStatus.NO_CONTENT)
   @UpdatePostLikeStatusApi()

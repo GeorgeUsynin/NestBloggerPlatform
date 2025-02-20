@@ -20,7 +20,7 @@ import {
   UpdateCommentApi,
   UpdateCommentLikeStatusApi,
 } from './swagger';
-import { JwtAuthGuard } from '../../user-accounts/guards/bearer/jwt-auth.guard';
+import { JwtHeaderAuthGuard } from '../../user-accounts/guards/bearer/jwt-header-auth.guard';
 import { JwtOptionalAuthGuard } from '../../user-accounts/guards/bearer/jwt-optional-auth.guard';
 import { ExtractUserFromRequest } from '../../user-accounts/guards/decorators/params/ExtractUserFromRequest.decorator';
 import { ExtractUserIfExistsFromRequest } from '../../user-accounts/guards/decorators/params/ExtractUserIfExistsFromRequest.decorator';
@@ -54,7 +54,7 @@ export class CommentsController {
   }
 
   @ApiBearerAuth()
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtHeaderAuthGuard)
   @Put(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   @UpdateCommentApi()
@@ -69,7 +69,7 @@ export class CommentsController {
   }
 
   @ApiBearerAuth()
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtHeaderAuthGuard)
   @Put(':id/like-status')
   @HttpCode(HttpStatus.NO_CONTENT)
   @UpdateCommentLikeStatusApi()
@@ -84,7 +84,7 @@ export class CommentsController {
   }
 
   @ApiBearerAuth()
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtHeaderAuthGuard)
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   @DeleteCommentApi()

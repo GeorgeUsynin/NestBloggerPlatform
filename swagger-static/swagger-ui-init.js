@@ -115,6 +115,51 @@ window.onload = function() {
           ]
         }
       },
+      "/auth/logout": {
+        "post": {
+          "operationId": "AuthController_logout",
+          "parameters": [],
+          "responses": {
+            "204": {
+              "description": ""
+            }
+          },
+          "security": [
+            {
+              "bearer": []
+            }
+          ],
+          "tags": [
+            "Auth"
+          ]
+        }
+      },
+      "/auth/refresh-token": {
+        "post": {
+          "operationId": "AuthController_refreshToken",
+          "parameters": [],
+          "responses": {
+            "200": {
+              "description": "",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/RefreshTokenSuccessViewDto"
+                  }
+                }
+              }
+            }
+          },
+          "security": [
+            {
+              "bearer": []
+            }
+          ],
+          "tags": [
+            "Auth"
+          ]
+        }
+      },
       "/auth/registration": {
         "post": {
           "operationId": "AuthController_registration",
@@ -1729,6 +1774,17 @@ window.onload = function() {
               }
             }
           }
+        },
+        "RefreshTokenSuccessViewDto": {
+          "type": "object",
+          "properties": {
+            "accessToken": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "accessToken"
+          ]
         },
         "SwaggerCreateUserInputDto": {
           "type": "object",

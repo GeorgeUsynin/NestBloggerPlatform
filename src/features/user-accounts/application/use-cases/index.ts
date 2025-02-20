@@ -6,3 +6,5 @@ export * from './registration-email-resending.use-case';
 export * from './change-password.use-case';
 export * from './recover-password.use-case';
 export * from './login.use-case';
+export * from './refresh-tokens.use-case';
+export * from './logout.use-case';

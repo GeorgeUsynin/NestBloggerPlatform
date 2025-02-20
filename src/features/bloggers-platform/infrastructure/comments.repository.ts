@@ -6,7 +6,7 @@ import {
   CommentModelType,
   DeletionStatus,
 } from '../domain/comment.entity';
-import { NotFoundDomainException } from 'src/core/exceptions/domain-exceptions';
+import { NotFoundDomainException } from '../../../core/exceptions/domain-exceptions';
 
 @Injectable()
 export class CommentsRepository {

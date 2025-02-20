@@ -26,6 +26,13 @@ export class UsersRepository {
     return user;
   }
 
+  async findUserById(id: string): Promise<UserDocument | null> {
+    return await this.UserModel.findOne({
+      _id: id,
+      deletionStatus: { $ne: DeletionStatus.PermanentDeleted },
+    });
+  }
+
   async findUserByLoginOrEmail(loginOrEmail: string) {
     return this.UserModel.findOne({
       $or: [{ login: loginOrEmail }, { email: loginOrEmail }],

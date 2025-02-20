@@ -5,15 +5,18 @@ import {
   HttpCode,
   HttpStatus,
   Post,
+  Req,
   Res,
   UseGuards,
 } from '@nestjs/common';
 import { CommandBus } from '@nestjs/cqrs';
-import { Response } from 'express';
+import { Response, Request } from 'express';
 import { ExtractUserFromRequest } from '../guards/decorators/params/ExtractUserFromRequest.decorator';
 import { UserContextDto } from '../guards/dto/user-context.dto';
+import { RefreshTokenContextDto } from '../guards/dto/refresh-token-context.dto';
 import { LocalAuthGuard } from '../guards/local/local-auth.guard';
-import { JwtAuthGuard } from '../guards/bearer/jwt-auth.guard';
+import { JwtHeaderAuthGuard } from '../guards/bearer/jwt-header-auth.guard';
+import { JwtCookieAuthGuard } from '../guards/bearer/jwt-cookie-auth.guard';
 import { CreateUserInputDto } from './dto/input-dto/create/users.input-dto';
 import { RegistrationConfirmationInputDto } from './dto/input-dto/registration-confirmation.input-dto';
 import { RegistrationEmailResendingInputDto } from './dto/input-dto/registration-email-resending.input-dto';
@@ -21,6 +24,7 @@ import { PasswordRecoveryInputDto } from './dto/input-dto/password-recovery.inpu
 import { NewPasswordInputDto } from './dto/input-dto/new-password.input-dto';
 import { MeViewDto } from './dto/view-dto/user.view-dto';
 import { LoginSuccessViewDto } from './dto/view-dto/login-success.view-dto';
+import { RefreshTokenSuccessViewDto } from './dto/view-dto/refresh-token-success.view-dto';
 import { AuthQueryRepository } from '../infrastructure/query/auth.query-repository';
 import {
   LoginApi,
@@ -36,7 +40,10 @@ import {
   ChangePasswordCommand,
   LoginCommand,
   LoginUseCaseResponse,
+  LogoutCommand,
   RecoverPasswordCommand,
+  RefreshTokensCommand,
+  RefreshTokensUseCaseResponse,
   RegisterUserCommand,
   RegistrationConfirmationCommand,
   RegistrationEmailResendingCommand,
@@ -50,7 +57,7 @@ export class AuthController {
   ) {}
 
   @ApiBearerAuth()
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtHeaderAuthGuard)
   @Get('me')
   @HttpCode(HttpStatus.OK)
   @MeApi()
@@ -63,13 +70,50 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   @LoginApi()
   async login(
+    @Req() request: Request,
     @Res({ passthrough: true }) response: Response,
     @ExtractUserFromRequest() user: UserContextDto,
   ): Promise<LoginSuccessViewDto> {
+    const userAgent = request.header('user-agent');
+    const clientIp = request.ip || '';
+
     const { accessToken, refreshToken } = await this.commandBus.execute<
       LoginCommand,
       LoginUseCaseResponse
-    >(new LoginCommand(user.id));
+    >(new LoginCommand(user.id, clientIp, userAgent));
+
+    response.cookie('refreshToken', refreshToken, {
+      httpOnly: true,
+      secure: true,
+    });
+
+    return { accessToken };
+  }
+
+  @ApiBearerAuth()
+  @UseGuards(JwtCookieAuthGuard)
+  @Post('logout')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  // TODO: add swagger
+  async logout(
+    @ExtractUserFromRequest() user: RefreshTokenContextDto,
+  ): Promise<void> {
+    return this.commandBus.execute(new LogoutCommand(user.id, user.deviceId));
+  }
+
+  @ApiBearerAuth()
+  @UseGuards(JwtCookieAuthGuard)
+  @Post('refresh-token')
+  @HttpCode(HttpStatus.OK)
+  // TODO: add swagger
+  async refreshToken(
+    @Res({ passthrough: true }) response: Response,
+    @ExtractUserFromRequest() user: RefreshTokenContextDto,
+  ): Promise<RefreshTokenSuccessViewDto> {
+    const { accessToken, refreshToken } = await this.commandBus.execute<
+      RefreshTokensCommand,
+      RefreshTokensUseCaseResponse
+    >(new RefreshTokensCommand(user.id, user.deviceId));
 
     response.cookie('refreshToken', refreshToken, {
       httpOnly: true,

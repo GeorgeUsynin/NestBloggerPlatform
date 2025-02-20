@@ -22,4 +22,7 @@ export function appSetup(app: INestApplication, coreConfig: CoreConfig) {
   app.use(cookieParser());
   // Setup validation constraints DI
   validationConstraintSetup(app, coreConfig);
+  // @ts-expect-error need proper type
+  // Allows to get correct IP address from req.ip
+  app.set('trust proxy', true);
 }

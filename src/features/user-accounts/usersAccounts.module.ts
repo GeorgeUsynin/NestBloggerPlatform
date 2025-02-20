@@ -4,14 +4,16 @@ import { UsersController } from './api/users.controller';
 import { UserSchema, User } from './domain/user.entity';
 import { UsersRepository } from './infrastructure/users.repository';
 import { UsersQueryRepository } from './infrastructure/query/users.query-repository';
+import { AuthDeviceSessionsRepository } from './infrastructure/authDeviceSessions.repository';
+import { AuthQueryRepository } from './infrastructure/query/auth.query-repository';
 import { AuthService } from './application/auth.service';
 import { RegistrationService } from './application/registration.service';
 import { CryptoService } from './application/crypto.service';
 import { AuthController } from './api/auth.controller';
 import { LocalStrategy } from './guards/local/local.strategy';
-import { JwtStrategy } from './guards/bearer/jwt.strategy';
+import { JwtHeaderStrategy } from './guards/bearer/jwt-header.strategy';
+import { JwtCookieStrategy } from './guards/bearer/jwt-cookie.strategy';
 import { JwtModule, JwtService } from '@nestjs/jwt';
-import { AuthQueryRepository } from './infrastructure/query/auth.query-repository';
 import { UserAccountsConfig } from './config';
 import {
   ACCESS_TOKEN_STRATEGY_INJECT_TOKEN,
@@ -22,12 +24,22 @@ import {
   CreateUserUseCase,
   DeleteUserUseCase,
   LoginUseCase,
+  LogoutUseCase,
   RecoverPasswordUseCase,
+  RefreshTokensUseCase,
   RegisterUserUseCase,
   RegistrationConfirmationUseCase,
   RegistrationEmailResendingUseCase,
 } from './application/use-cases';
+import {
+  AuthDeviceSession,
+  AuthDeviceSessionSchema,
+} from './domain/authDeviceSession.entity';
 
+const mongooseModels = [
+  { name: User.name, schema: UserSchema },
+  { name: AuthDeviceSession.name, schema: AuthDeviceSessionSchema },
+];
 const useCases = [
   CreateUserUseCase,
   DeleteUserUseCase,
@@ -37,17 +49,17 @@ const useCases = [
   ChangePasswordUseCase,
   RecoverPasswordUseCase,
   LoginUseCase,
+  RefreshTokensUseCase,
+  LogoutUseCase,
 ];
-const strategies = [LocalStrategy, JwtStrategy];
+const strategies = [LocalStrategy, JwtHeaderStrategy, JwtCookieStrategy];
+const repositories = [UsersRepository, AuthDeviceSessionsRepository];
 const queryRepositories = [UsersQueryRepository, AuthQueryRepository];
 const services = [AuthService, CryptoService, RegistrationService];
 
 @Module({
   // This will allow injecting the UserModel into the providers in this module
-  imports: [
-    MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
-    JwtModule,
-  ],
+  imports: [MongooseModule.forFeature(mongooseModels), JwtModule],
   controllers: [AuthController, UsersController],
   providers: [
     {
@@ -74,8 +86,9 @@ const services = [AuthService, CryptoService, RegistrationService];
       },
       inject: [UserAccountsConfig],
     },
-    UsersRepository,
+
     UserAccountsConfig,
+    ...repositories,
     ...queryRepositories,
     ...services,
     ...strategies,
