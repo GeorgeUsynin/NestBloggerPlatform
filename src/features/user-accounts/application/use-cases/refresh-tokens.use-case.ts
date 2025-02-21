@@ -48,7 +48,6 @@ export class RefreshTokensUseCase
       );
 
     authDeviceSession.update({
-      deviceId,
       issuedAt: new Date(Number(iat) * 1000).toISOString(),
       expirationDateOfRefreshToken: new Date(Number(exp) * 1000).toISOString(),
     });

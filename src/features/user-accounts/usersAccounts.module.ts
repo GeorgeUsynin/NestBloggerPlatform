@@ -5,6 +5,7 @@ import { UserSchema, User } from './domain/user.entity';
 import { UsersRepository } from './infrastructure/users.repository';
 import { UsersQueryRepository } from './infrastructure/query/users.query-repository';
 import { AuthDeviceSessionsRepository } from './infrastructure/authDeviceSessions.repository';
+import { AuthDeviceSessionQueryRepository } from './infrastructure/query/authDeviceSessions.query-repository';
 import { AuthQueryRepository } from './infrastructure/query/auth.query-repository';
 import { AuthService } from './application/auth.service';
 import { RegistrationService } from './application/registration.service';
@@ -54,7 +55,11 @@ const useCases = [
 ];
 const strategies = [LocalStrategy, JwtHeaderStrategy, JwtCookieStrategy];
 const repositories = [UsersRepository, AuthDeviceSessionsRepository];
-const queryRepositories = [UsersQueryRepository, AuthQueryRepository];
+const queryRepositories = [
+  UsersQueryRepository,
+  AuthQueryRepository,
+  AuthDeviceSessionQueryRepository,
+];
 const services = [AuthService, CryptoService, RegistrationService];
 
 @Module({

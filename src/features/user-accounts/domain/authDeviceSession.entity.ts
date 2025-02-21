@@ -17,6 +17,9 @@ export class AuthDeviceSession {
   issuedAt: string;
 
   @Prop({ type: String, required: true })
+  deviceName: string;
+
+  @Prop({ type: String, required: true })
   clientIp: string;
 
   @Prop({ type: String, required: true })
@@ -32,6 +35,7 @@ export class AuthDeviceSession {
     authDeviceSession.deviceId = dto.deviceId;
     authDeviceSession.expirationDateOfRefreshToken =
       dto.expirationDateOfRefreshToken;
+    authDeviceSession.deviceName = dto.deviceName;
     authDeviceSession.issuedAt = dto.issuedAt;
     authDeviceSession.userId = dto.userId;
 
@@ -49,7 +53,6 @@ export class AuthDeviceSession {
   }
 
   update(dto: UpdateAuthDeviceSessionDto) {
-    this.deviceId = dto.deviceId;
     this.issuedAt = dto.issuedAt;
     this.expirationDateOfRefreshToken = dto.expirationDateOfRefreshToken;
   }
