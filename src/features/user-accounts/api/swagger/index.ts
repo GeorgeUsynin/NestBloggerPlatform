@@ -8,3 +8,5 @@ export * from './users/create-user.decorator';
 export * from './users/get-all-users.decorator';
 export * from './users/delete-user.decorator';
 export * from './users/get-user.decorator';
+export * from './securityDevices/delete-auth-session-device-except-current.decorator';
+export * from './securityDevices//get-all-auth-session-devices.decorator';

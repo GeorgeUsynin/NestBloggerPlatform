@@ -31,11 +31,14 @@ import {
   RegisterUserUseCase,
   RegistrationConfirmationUseCase,
   RegistrationEmailResendingUseCase,
+  TerminateAllAuthSessionDevicesExceptCurrentUseCase,
+  TerminateAuthSessionDeviceByIdUseCase,
 } from './application/use-cases';
 import {
   AuthDeviceSession,
   AuthDeviceSessionSchema,
 } from './domain/authDeviceSession.entity';
+import { SecurityDevicesController } from './api/securityDevices.controller';
 
 const mongooseModels = [
   { name: User.name, schema: UserSchema },
@@ -52,6 +55,8 @@ const useCases = [
   LoginUseCase,
   RefreshTokensUseCase,
   LogoutUseCase,
+  TerminateAllAuthSessionDevicesExceptCurrentUseCase,
+  TerminateAuthSessionDeviceByIdUseCase,
 ];
 const strategies = [LocalStrategy, JwtHeaderStrategy, JwtCookieStrategy];
 const repositories = [UsersRepository, AuthDeviceSessionsRepository];
@@ -65,7 +70,7 @@ const services = [AuthService, CryptoService, RegistrationService];
 @Module({
   // This will allow injecting the UserModel into the providers in this module
   imports: [MongooseModule.forFeature(mongooseModels), JwtModule],
-  controllers: [AuthController, UsersController],
+  controllers: [AuthController, UsersController, SecurityDevicesController],
   providers: [
     {
       provide: ACCESS_TOKEN_STRATEGY_INJECT_TOKEN,

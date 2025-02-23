@@ -121,7 +121,10 @@ window.onload = function() {
           "parameters": [],
           "responses": {
             "204": {
-              "description": ""
+              "description": "No Content"
+            },
+            "401": {
+              "description": "Unauthorized"
             }
           },
           "security": [
@@ -129,6 +132,7 @@ window.onload = function() {
               "bearer": []
             }
           ],
+          "summary": "In cookie client must send correct refreshToken that will be revoked",
           "tags": [
             "Auth"
           ]
@@ -140,14 +144,17 @@ window.onload = function() {
           "parameters": [],
           "responses": {
             "200": {
-              "description": "",
+              "description": "Returns JWT accessToken (expired after 10 seconds) in body and JWT refreshToken in cookie (http-only, secure) (expired after 20 seconds).",
               "content": {
                 "application/json": {
                   "schema": {
-                    "$ref": "#/components/schemas/RefreshTokenSuccessViewDto"
+                    "$ref": "#/components/schemas/SwaggerRefreshTokenSuccessViewDto"
                   }
                 }
               }
+            },
+            "401": {
+              "description": "Unauthorized"
             }
           },
           "security": [
@@ -155,6 +162,7 @@ window.onload = function() {
               "bearer": []
             }
           ],
+          "summary": "Generate new pair of access and refresh tokens (in cookie client must send correct refreshToken that will be revoked after refreshing) Device LastActiveDate should be overrode by issued Date of new refresh token",
           "tags": [
             "Auth"
           ]
@@ -586,6 +594,99 @@ window.onload = function() {
           "summary": "Add new user to the system",
           "tags": [
             "Users"
+          ]
+        }
+      },
+      "/security/devices": {
+        "get": {
+          "operationId": "SecurityDevicesController_getAllAuthDeviceSessions",
+          "parameters": [],
+          "responses": {
+            "200": {
+              "description": "Success",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/AuthDeviceSessionViewDto"
+                    }
+                  }
+                }
+              }
+            },
+            "401": {
+              "description": "Unauthorized"
+            }
+          },
+          "security": [
+            {
+              "bearer": []
+            }
+          ],
+          "summary": "Returns all devices with active sessions for current user",
+          "tags": [
+            "SecurityDevices"
+          ]
+        },
+        "delete": {
+          "operationId": "SecurityDevicesController_terminateAllAuthDeviceSessionsExceptCurrent",
+          "parameters": [],
+          "responses": {
+            "204": {
+              "description": "No Content"
+            },
+            "401": {
+              "description": "Unauthorized"
+            }
+          },
+          "security": [
+            {
+              "bearer": []
+            }
+          ],
+          "summary": "Terminate all other (exclude current) device's sessions",
+          "tags": [
+            "SecurityDevices"
+          ]
+        }
+      },
+      "/security/devices/{id}": {
+        "delete": {
+          "operationId": "SecurityDevicesController_terminateAuthDeviceSessionById",
+          "parameters": [
+            {
+              "name": "id",
+              "required": true,
+              "in": "path",
+              "description": "Id of session that will be terminated",
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "responses": {
+            "204": {
+              "description": "No Content"
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "403": {
+              "description": "If try to delete the deviceId of other user"
+            },
+            "404": {
+              "description": "Not Found"
+            }
+          },
+          "security": [
+            {
+              "bearer": []
+            }
+          ],
+          "summary": "Terminate specified device session",
+          "tags": [
+            "SecurityDevices"
           ]
         }
       },
@@ -1775,11 +1876,12 @@ window.onload = function() {
             }
           }
         },
-        "RefreshTokenSuccessViewDto": {
+        "SwaggerRefreshTokenSuccessViewDto": {
           "type": "object",
           "properties": {
             "accessToken": {
-              "type": "string"
+              "type": "string",
+              "description": "JWT access token"
             }
           },
           "required": [
@@ -1922,6 +2024,29 @@ window.onload = function() {
             "page",
             "pageSize",
             "items"
+          ]
+        },
+        "AuthDeviceSessionViewDto": {
+          "type": "object",
+          "properties": {
+            "deviceId": {
+              "type": "string"
+            },
+            "ip": {
+              "type": "string"
+            },
+            "lastActiveDate": {
+              "type": "string"
+            },
+            "title": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "deviceId",
+            "ip",
+            "lastActiveDate",
+            "title"
           ]
         },
         "BlogViewDto": {

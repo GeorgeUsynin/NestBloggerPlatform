@@ -8,3 +8,5 @@ export * from './recover-password.use-case';
 export * from './login.use-case';
 export * from './refresh-tokens.use-case';
 export * from './logout.use-case';
+export * from './terminate-all-auth-session-devices-except-current.use-case';
+export * from './terminate-auth-session-device-by-id.use-case';

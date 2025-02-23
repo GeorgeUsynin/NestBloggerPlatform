@@ -35,6 +35,8 @@ import {
   RegistrationEmailResendingApi,
 } from './swagger';
 import { NewPasswordApi } from './swagger/auth/new-password.decorator';
+import { LogoutApi } from './swagger/auth/logout.decorator';
+import { RefreshTokenApi } from './swagger/auth/refresh-token.decorator';
 import { ApiBearerAuth } from '@nestjs/swagger';
 import {
   ChangePasswordCommand,
@@ -94,7 +96,7 @@ export class AuthController {
   @UseGuards(JwtCookieAuthGuard)
   @Post('logout')
   @HttpCode(HttpStatus.NO_CONTENT)
-  // TODO: add swagger
+  @LogoutApi()
   async logout(
     @ExtractUserFromRequest() user: RefreshTokenContextDto,
   ): Promise<void> {
@@ -105,7 +107,7 @@ export class AuthController {
   @UseGuards(JwtCookieAuthGuard)
   @Post('refresh-token')
   @HttpCode(HttpStatus.OK)
-  // TODO: add swagger
+  @RefreshTokenApi()
   async refreshToken(
     @Res({ passthrough: true }) response: Response,
     @ExtractUserFromRequest() user: RefreshTokenContextDto,

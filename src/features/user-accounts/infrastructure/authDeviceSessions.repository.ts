@@ -39,7 +39,8 @@ export class AuthDeviceSessionsRepository {
 
   async deleteAllOtherUserDeviceSessions(userId: string, deviceId: string) {
     return this.AuthDeviceSessionModel.deleteMany({
-      $and: [{ userId }, { deviceId: { $ne: deviceId } }],
+      userId,
+      deviceId: { $ne: deviceId },
     });
   }
 
