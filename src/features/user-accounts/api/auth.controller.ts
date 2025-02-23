@@ -50,8 +50,10 @@ import {
   RegistrationConfirmationCommand,
   RegistrationEmailResendingCommand,
 } from '../application/use-cases';
+import { ThrottlerGuard, SkipThrottle } from '@nestjs/throttler';
 
 @Controller('auth')
+@UseGuards(ThrottlerGuard)
 export class AuthController {
   constructor(
     private authQueryRepository: AuthQueryRepository,
@@ -63,6 +65,7 @@ export class AuthController {
   @Get('me')
   @HttpCode(HttpStatus.OK)
   @MeApi()
+  @SkipThrottle()
   async me(@ExtractUserFromRequest() user: UserContextDto): Promise<MeViewDto> {
     return this.authQueryRepository.me(user.id);
   }
@@ -97,6 +100,7 @@ export class AuthController {
   @Post('logout')
   @HttpCode(HttpStatus.NO_CONTENT)
   @LogoutApi()
+  @SkipThrottle()
   async logout(
     @ExtractUserFromRequest() user: RefreshTokenContextDto,
   ): Promise<void> {
@@ -108,6 +112,7 @@ export class AuthController {
   @Post('refresh-token')
   @HttpCode(HttpStatus.OK)
   @RefreshTokenApi()
+  @SkipThrottle()
   async refreshToken(
     @Res({ passthrough: true }) response: Response,
     @ExtractUserFromRequest() user: RefreshTokenContextDto,

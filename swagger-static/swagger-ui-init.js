@@ -107,6 +107,9 @@ window.onload = function() {
             },
             "401": {
               "description": "If the password or login or email is wrong"
+            },
+            "429": {
+              "description": "More than 5 attempts from one IP-address during 10 seconds"
             }
           },
           "summary": "Try login user to the system",

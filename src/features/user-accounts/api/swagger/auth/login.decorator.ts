@@ -5,6 +5,7 @@ import {
   ApiOkResponse,
   ApiOperation,
   ApiProperty,
+  ApiTooManyRequestsResponse,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { LoginSuccessViewDto } from '../../dto/view-dto/login-success.view-dto';
@@ -38,6 +39,9 @@ export const LoginApi = () => {
     }),
     ApiUnauthorizedResponse({
       description: 'If the password or login or email is wrong',
+    }),
+    ApiTooManyRequestsResponse({
+      description: 'More than 5 attempts from one IP-address during 10 seconds',
     }),
   );
 };

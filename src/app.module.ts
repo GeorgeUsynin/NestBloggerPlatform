@@ -13,6 +13,8 @@ import { ServeStaticModule } from '@nestjs/serve-static';
 import { ENVIRONMENTS } from './constants';
 import { CoreConfig } from './core/config';
 import { join } from 'path';
+import { ThrottlerModule } from '@nestjs/throttler';
+import { CqrsModule } from '@nestjs/cqrs';
 
 @Module({
   imports: [
@@ -37,6 +39,13 @@ import { join } from 'path';
       }),
       inject: [CoreConfig],
     }),
+    ThrottlerModule.forRoot([
+      {
+        ttl: 10000,
+        limit: 5,
+      },
+    ]),
+    CqrsModule.forRoot(),
     CoreModule,
     UsersAccountsModule,
     BloggersPlatformModule,
