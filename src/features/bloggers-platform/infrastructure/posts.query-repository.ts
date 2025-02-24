@@ -125,26 +125,18 @@ export class PostsQueryRepository {
   }
 
   private async getNewestLikes(postId: string) {
-    const newestLikesRaw = await this.LikeModel.find({
+    const newestLikes = await this.LikeModel.find({
       parentId: postId,
       status: LikeStatus.Like,
     })
       .sort({ createdAt: -1 })
-      .limit(3);
+      .limit(3)
+      .populate('userId', 'login'); // Fetch only `login` from UserModel
 
-    const likesUsersIds = newestLikesRaw.map((like) => like.userId);
-    const users = await this.UserModel.find({ _id: { $in: likesUsersIds } });
-
-    const newestLikes = newestLikesRaw.map((like) => {
-      const user = users.find((user) => user._id.toString() === like.userId);
-      return {
-        addedAt: like.createdAt as string,
-        // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
-        login: user?.login!,
-        userId: like.userId,
-      };
-    });
-
-    return newestLikes;
+    return newestLikes.map((like) => ({
+      addedAt: like.createdAt as string,
+      login: (like.userId as any).login,
+      userId: (like.userId as any)._id.toString(),
+    }));
   }
 }

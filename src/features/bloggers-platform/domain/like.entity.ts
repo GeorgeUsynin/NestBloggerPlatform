@@ -1,5 +1,9 @@
 import { Schema, Prop, SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument, Model, SchemaTimestampsConfig } from 'mongoose';
+import mongoose, {
+  HydratedDocument,
+  Model,
+  SchemaTimestampsConfig,
+} from 'mongoose';
 import { CreateLikeDto } from './dto/create/likes.create-dto';
 import { UpdateLikeDto } from './dto/update/likes.update-dto';
 
@@ -11,7 +15,7 @@ export enum LikeStatus {
 
 @Schema({ timestamps: true })
 export class Like {
-  @Prop({ type: String, required: true })
+  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true })
   userId: string;
 
   @Prop({ type: String, required: true })
